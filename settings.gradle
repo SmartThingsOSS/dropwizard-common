@@ -1,0 +1,9 @@
+include 'dropwizard-guice'
+include 'dropwizard-buildinfo'
+include 'dropwizard-cassandra'
+include 'dropwizard-logging'
+include 'dropwizard-oauth'
+include 'dropwizard-datadog'
+include 'dropwizard-protobuf'
+
+rootProject.name = 'dropwizard-common'

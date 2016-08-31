@@ -1,0 +1,35 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.google.protobuf:protobuf-gradle-plugin:0.7.7'
+	}
+}
+
+apply plugin: 'com.google.protobuf'
+dependencies {
+	compile 'com.google.protobuf:protobuf-java:3.0.0'
+	compile "io.dropwizard:dropwizard-jersey:${dropwizardVersion}"
+
+	testCompile "io.dropwizard:dropwizard-testing:${dropwizardVersion}"
+	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+	testRuntime 'cglib:cglib-nodep:2.2.2'
+	testRuntime 'org.objenesis:objenesis:1.2'
+	testRuntime 'ch.qos.logback:logback-classic:1.1.2'
+}
+
+protobuf {
+	generatedFilesBaseDir = "$projectDir/src/test/generated"
+	protoc {
+		artifact = 'com.google.protobuf:protoc:3.0.0'
+	}
+}
+
+sourceSets {
+	test {
+		proto {
+			srcDir 'src/test/resources'
+		}
+	}
+}

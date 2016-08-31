@@ -1,0 +1,13 @@
+dependencies {
+
+	compile 'org.coursera:dropwizard-metrics-datadog:1.1.2'
+	compile("com.github.rholder:guava-retrying:2.0.0") {
+		// This library has a range of accepted versions which pulls in rc guava libs
+		// Other dependencies are already accounted for
+		transitive = false
+	}
+	compile project(':dropwizard-logging')
+	testRuntime 'cglib:cglib-nodep:2.2.2'
+	testRuntime 'org.objenesis:objenesis:1.2'
+	testRuntime 'ch.qos.logback:logback-classic:1.1.2'
+}

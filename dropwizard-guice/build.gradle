@@ -1,0 +1,11 @@
+dependencies {
+	compile 'com.google.inject:guice:4.0'
+	compile 'com.google.inject.extensions:guice-servlet:4.0'
+	compile 'com.google.inject.extensions:guice-multibindings:4.0'
+	compile "io.dropwizard:dropwizard-core:${dropwizardVersion}"
+
+	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+	testRuntime 'cglib:cglib-nodep:2.2.2'
+	testRuntime 'org.objenesis:objenesis:1.2'
+	testRuntime 'ch.qos.logback:logback-classic:1.1.2'
+}

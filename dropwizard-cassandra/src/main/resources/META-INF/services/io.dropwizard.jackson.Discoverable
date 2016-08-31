@@ -1,0 +1,4 @@
+smartthings.dw.cassandra.loadbalancing.LoadBalancingPolicyFactory
+smartthings.dw.cassandra.addresstranslater.AddressTranslaterFactory
+smartthings.dw.cassandra.speculative.SpeculativeExecutionPolicyFactory
+smartthings.dw.cassandra.retry.RetryPolicyFactory

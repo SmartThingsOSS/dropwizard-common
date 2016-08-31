@@ -1,0 +1,2 @@
+smartthings.dw.cassandra.retry.DowngradingConsistencyRetryPolicyFactory
+smartthings.dw.cassandra.retry.LoggingRetryPolicyFactory

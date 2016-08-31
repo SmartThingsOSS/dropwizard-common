@@ -1,0 +1,3 @@
+smartthings.dw.cassandra.loadbalancing.DCAwareRoundRobinPolicyFactory
+smartthings.dw.cassandra.loadbalancing.TokenAwarePolicyFactory
+smartthings.dw.cassandra.loadbalancing.RoundRobinPolicyFactory

@@ -1,0 +1,17 @@
+dependencies {
+	compile project(':dropwizard-guice')
+	compile project(':dropwizard-logging')
+	compile "io.dropwizard:dropwizard-auth:${dropwizardVersion}"
+	compile 'com.ning:async-http-client:1.9.31'
+
+	testCompile("org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:${jerseyVersion}") {
+		// See http://www.dropwizard.io/0.9.1/docs/manual/auth.html#testing-protected-resources
+		exclude module: 'junit'
+		exclude module: 'javax.servlet-api'
+	}
+	testCompile "io.dropwizard:dropwizard-testing:${dropwizardVersion}"
+	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+	testRuntime 'cglib:cglib-nodep:2.2.2'
+	testRuntime 'org.objenesis:objenesis:1.2'
+	testRuntime 'ch.qos.logback:logback-classic:1.1.2'
+}
