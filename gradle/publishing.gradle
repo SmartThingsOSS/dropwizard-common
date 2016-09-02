@@ -34,6 +34,9 @@ if (isSnapshot) {
 			mavenJava(MavenPublication) {
 				from components.java
 				artifact sourceJar
+                groupId project.group
+                artifactId project.name
+                version project.version
 				pom.withXml {
 					def root = asNode()
 					// Work around gradle bug that publishes compile dependencies as runtime
@@ -71,10 +74,8 @@ bintray {
 	publish = true
 	pkg {
 		repo = 'maven'
-		name = 'smartthings.dropwizard-common'
 		userOrg = 'smartthingsoss'
 		licenses = ['Apache-2.0']
-		desc = 'Common Dropwizard Modules'
 		labels = ['dropwizard']
 		websiteUrl = 'https://github.com/SmartThingsOSS/dropwizard-common'
 		issueTrackerUrl = 'https://github.com/SmartThingsOSS/dropwizard-common/issues'
