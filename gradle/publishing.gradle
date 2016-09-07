@@ -74,7 +74,7 @@ bintray {
 	publish = true
 	pkg {
 		repo = 'maven'
-        name = project.name
+        name = "smartthings.${project.name}"
 		userOrg = 'smartthingsoss'
 		licenses = ['Apache-2.0']
 		labels = ['dropwizard']
