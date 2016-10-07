@@ -1,11 +1,12 @@
 package smartthings.dw.oauth
 
 import com.google.common.base.Optional
-import com.ning.http.client.AsyncHttpClient
-import com.ning.http.client.ListenableFuture
-import com.ning.http.client.Response
 import io.dropwizard.auth.AuthenticationException
 import io.dropwizard.util.Duration
+import org.asynchttpclient.AsyncHttpClient
+import org.asynchttpclient.BoundRequestBuilder
+import org.asynchttpclient.ListenableFuture
+import org.asynchttpclient.Response
 import smartthings.dw.logging.LoggingContext
 import spock.lang.Specification
 
@@ -16,7 +17,7 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 	AsyncHttpClient client
 
 	String token = 'abcd'
-	AsyncHttpClient.BoundRequestBuilder requestBuilder = Mock()
+	BoundRequestBuilder requestBuilder = Mock()
 	Response response = Mock()
 	ListenableFuture<Response> future = Mock()
 
