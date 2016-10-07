@@ -5,12 +5,13 @@ import com.google.common.base.Optional;
 import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
 import com.google.common.primitives.Ints;
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.Realm;
-import com.ning.http.client.Response;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.jackson.Jackson;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.Realm;
+import org.asynchttpclient.Response;
 import smartthings.dw.logging.LoggingContext;
 
 import javax.inject.Inject;
@@ -25,7 +26,7 @@ public class SpringSecurityAuthenticator implements Authenticator<String, OAuthT
 	private final int timeout;
 
 	public SpringSecurityAuthenticator(AuthConfiguration config) {
-		this(config, new AsyncHttpClient());
+		this(config, new DefaultAsyncHttpClient());
 	}
 
 	@Inject
@@ -33,9 +34,7 @@ public class SpringSecurityAuthenticator implements Authenticator<String, OAuthT
 		this.config = config;
 		this.client = client;
 		timeout = Ints.checkedCast(config.getRequestTimeout().toMilliseconds());
-		realm = new Realm.RealmBuilder()
-			.setPrincipal(config.getUser())
-			.setPassword(config.getPassword())
+		realm = new Realm.Builder(config.getUser(), config.getPassword())
 			.setUsePreemptiveAuth(true)
 			.setScheme(Realm.AuthScheme.BASIC)
 			.build();

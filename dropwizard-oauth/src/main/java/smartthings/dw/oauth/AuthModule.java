@@ -5,10 +5,10 @@ import com.google.common.cache.CacheBuilder;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
-import com.ning.http.client.AsyncHttpClient;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.CachingAuthenticator;
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
+import org.asynchttpclient.AsyncHttpClient;
 import smartthings.dw.guice.AbstractDwModule;
 import smartthings.dw.oauth.scope.ExtendedAuthDynamicFeature;
 
