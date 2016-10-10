@@ -2,7 +2,7 @@ dependencies {
 	compile project(':dropwizard-guice')
 	compile project(':dropwizard-logging')
 	compile "io.dropwizard:dropwizard-auth:${dropwizardVersion}"
-	compile 'org.asynchttpclient:async-http-client:2.0.16'
+	compile "org.asynchttpclient:async-http-client:${asynchttpclientVersion}"
 
 	testCompile("org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:${jerseyVersion}") {
 		// See http://www.dropwizard.io/0.9.1/docs/manual/auth.html#testing-protected-resources

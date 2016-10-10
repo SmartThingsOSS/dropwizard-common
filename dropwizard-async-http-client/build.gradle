@@ -1,0 +1,7 @@
+dependencies {
+	compile project(':dropwizard-guice')
+	compile project(':dropwizard-logging')
+	compile "org.asynchttpclient:async-http-client:${asynchttpclientVersion}"
+
+	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+}
