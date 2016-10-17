@@ -1,13 +1,13 @@
 package smartthings.dw.oauth;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import smartthings.dw.oauth.scope.ScopeSupport;
 
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 public class OAuthToken implements Principal, ScopeSupport {

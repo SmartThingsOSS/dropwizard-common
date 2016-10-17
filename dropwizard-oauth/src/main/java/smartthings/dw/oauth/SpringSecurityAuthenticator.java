@@ -1,7 +1,6 @@
 package smartthings.dw.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Optional;
 import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
 import com.google.common.primitives.Ints;
@@ -15,6 +14,7 @@ import org.asynchttpclient.Response;
 import smartthings.dw.logging.LoggingContext;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 public class SpringSecurityAuthenticator implements Authenticator<String, OAuthToken> {
 	private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
@@ -54,9 +54,9 @@ public class SpringSecurityAuthenticator implements Authenticator<String, OAuthT
 			int code = resp.getStatusCode();
 			if (code == 200) {
 				AuthResponse oauth = MAPPER.readValue(resp.getResponseBodyAsStream(), AuthResponse.class);
-				return Optional.fromNullable(buildToken(oauth));
+				return Optional.ofNullable(buildToken(oauth));
 			} else if (code >= 400 && code < 500) {
-				return Optional.absent();
+				return Optional.empty();
 			} else {
 				throw new AuthenticationException(String.format("Invalid status code found %d", resp.getStatusCode()));
 			}
@@ -67,7 +67,7 @@ public class SpringSecurityAuthenticator implements Authenticator<String, OAuthT
 
 	private OAuthToken buildToken(AuthResponse resp) {
 		if (resp.getClientId() != null && !resp.getClientId().isEmpty()) {
-			Optional<User> user = Optional.absent();
+			Optional<User> user = Optional.empty();
 			if (resp.getUserName() != null && !resp.getUserName().isEmpty()) {
 				// User will be absent in the case of client only tokens
 				user = Optional.of(
