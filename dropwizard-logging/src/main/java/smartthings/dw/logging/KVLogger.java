@@ -8,7 +8,7 @@ import java.util.Map;
 public class KVLogger {
 	private KVLogger() {}
 
-	public static void debug(Logger l, String key, Map<String, Object> params) {
+	public static void debug(Logger l, String key, Map<String, ? extends Object> params) {
 		l.debug(buildLogMessage(key, params));
 	}
 
@@ -16,11 +16,11 @@ public class KVLogger {
 		debug(l, key, Collections.emptyMap());
 	}
 
-	public static void debug(Logger l, String key, Map<String, Object> params, Throwable t) {
+	public static void debug(Logger l, String key, Map<String, ? extends Object> params, Throwable t) {
 		l.debug(buildLogMessage(key, params), t);
 	}
 
-	public static void info(Logger l, String key, Map<String, Object> params) {
+	public static void info(Logger l, String key, Map<String, ? extends Object> params) {
 		l.info(buildLogMessage(key, params));
 	}
 
@@ -28,11 +28,11 @@ public class KVLogger {
 		info(l, key, Collections.emptyMap());
 	}
 
-	public static void info(Logger l, String key, Map<String, Object> params, Throwable t) {
+	public static void info(Logger l, String key, Map<String, ? extends Object> params, Throwable t) {
 		l.info(buildLogMessage(key, params), t);
 	}
 
-	public static void warn(Logger l, String key, Map<String, Object> params) {
+	public static void warn(Logger l, String key, Map<String, ? extends Object> params) {
 		l.warn(buildLogMessage(key, params));
 	}
 
@@ -40,11 +40,11 @@ public class KVLogger {
 		warn(l, key, Collections.emptyMap());
 	}
 
-	public static void warn(Logger l, String key, Map<String, Object> params, Throwable t) {
+	public static void warn(Logger l, String key, Map<String, ? extends Object> params, Throwable t) {
 		l.warn(buildLogMessage(key, params), t);
 	}
 
-	public static void error(Logger l, String key, Map<String, Object> params) {
+	public static void error(Logger l, String key, Map<String, ? extends Object> params) {
 		l.error(buildLogMessage(key, params));
 	}
 
@@ -52,11 +52,11 @@ public class KVLogger {
 		error(l, key, Collections.emptyMap());
 	}
 
-	public static void error(Logger l, String key, Map<String, Object> params, Throwable t) {
+	public static void error(Logger l, String key, Map<String, ? extends Object> params, Throwable t) {
 		l.error(buildLogMessage(key, params), t);
 	}
 
-	public static void trace(Logger l, String key, Map<String, Object> params) {
+	public static void trace(Logger l, String key, Map<String, ? extends Object> params) {
 		l.trace(buildLogMessage(key, params));
 	}
 
@@ -64,13 +64,13 @@ public class KVLogger {
 		trace(l, key, Collections.emptyMap());
 	}
 
-	public static void trace(Logger l, String key, Map<String, Object> params, Throwable t) {
+	public static void trace(Logger l, String key, Map<String, ? extends Object> params, Throwable t) {
 		l.trace(buildLogMessage(key, params), t);
 	}
 
-	private static String buildLogMessage(String key, Map<String, Object> params) {
+	private static String buildLogMessage(String key, Map<String, ? extends Object> params) {
 		StringBuilder sb = new StringBuilder(",key=").append(key);
-		for ( Map.Entry<String, Object> e : params.entrySet()) {
+		for ( Map.Entry<String, ? extends Object> e : params.entrySet()) {
 			sb.append(", ").append(clean(e.getKey())).append('=').append(clean(e.getValue()));
 		}
 		sb.append(',');
