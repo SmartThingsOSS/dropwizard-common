@@ -15,7 +15,7 @@ public class OAuthToken implements Principal, ScopeSupport {
 	private final Optional<User> user;
 	private final Set<String> scopes;
 	private final String clientId;
-    private final String authToken;
+	private final String authToken;
 
 	public OAuthToken(Optional<User> user, Collection<String> scopes, String clientId, String authToken) {
 		this.user = user;
@@ -46,7 +46,7 @@ public class OAuthToken implements Principal, ScopeSupport {
 		return clientId;
 	}
 
-	public String getAuthToken() {
+	public String getValue() {
         return authToken;
     }
 
@@ -72,7 +72,6 @@ public class OAuthToken implements Principal, ScopeSupport {
 			.add("user", user)
 			.add("scopes", scopes)
 			.add("clientId", clientId)
-            .add("authToken", authToken)
 			.toString();
 	}
 }
