@@ -21,7 +21,7 @@ public class OAuthToken implements Principal, ScopeSupport {
 		this.user = user;
 		this.scopes = ImmutableSet.copyOf(scopes);
 		this.clientId = clientId;
-        this.authToken = authToken;
+		this.authToken = authToken;
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class OAuthToken implements Principal, ScopeSupport {
 		return Objects.equals(user, that.user) &&
 			Objects.equals(scopes, that.scopes) &&
 			Objects.equals(clientId, that.clientId) &&
-            Objects.equals(authToken, that.authToken);
+			Objects.equals(authToken, that.authToken);
 	}
 
 	@Override
