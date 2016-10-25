@@ -15,11 +15,13 @@ public class OAuthToken implements Principal, ScopeSupport {
 	private final Optional<User> user;
 	private final Set<String> scopes;
 	private final String clientId;
+	private final String authToken;
 
-	public OAuthToken(Optional<User> user, Collection<String> scopes, String clientId) {
+	public OAuthToken(Optional<User> user, Collection<String> scopes, String clientId, String authToken) {
 		this.user = user;
 		this.scopes = ImmutableSet.copyOf(scopes);
 		this.clientId = clientId;
+		this.authToken = authToken;
 	}
 
 	@Override
@@ -44,6 +46,10 @@ public class OAuthToken implements Principal, ScopeSupport {
 		return clientId;
 	}
 
+	public String getValue() {
+        return authToken;
+    }
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -51,12 +57,13 @@ public class OAuthToken implements Principal, ScopeSupport {
 		OAuthToken that = (OAuthToken) o;
 		return Objects.equals(user, that.user) &&
 			Objects.equals(scopes, that.scopes) &&
-			Objects.equals(clientId, that.clientId);
+			Objects.equals(clientId, that.clientId) &&
+			Objects.equals(authToken, that.authToken);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(user, scopes, clientId);
+		return Objects.hash(user, scopes, clientId, authToken);
 	}
 
 	@Override
