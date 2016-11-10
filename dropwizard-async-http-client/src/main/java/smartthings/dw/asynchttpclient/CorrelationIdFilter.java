@@ -8,6 +8,7 @@ import org.asynchttpclient.filter.RequestFilter;
 import org.slf4j.MDC;
 import smartthings.dw.logging.LoggingContext;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class CorrelationIdFilter implements RequestFilter {
@@ -15,7 +16,7 @@ public class CorrelationIdFilter implements RequestFilter {
 	@Override
 	public <T> FilterContext<T> filter(FilterContext<T> ctx) throws FilterException {
 
-		final Map<String, String> mdc = MDC.getCopyOfContextMap();
+		final Map<String, String> mdc = getCopyOfContextMap();
 		final AsyncHandler<T> asyncHandler = ctx.getAsyncHandler();
 
 		// Wrap AsyncHandler to copy MDC since it executes on a different thread
@@ -84,4 +85,12 @@ public class CorrelationIdFilter implements RequestFilter {
 		}
 		return newContext;
 	}
+
+    /**
+     * Provides null safe access to MDC Context Map
+     */
+	private Map<String, String> getCopyOfContextMap() {
+        Map<String, String> context = MDC.getCopyOfContextMap();
+        return context == null ? Collections.emptyMap() : context;
+    }
 }
