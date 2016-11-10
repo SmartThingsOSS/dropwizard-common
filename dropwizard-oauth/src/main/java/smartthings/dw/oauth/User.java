@@ -4,7 +4,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.List;
-import java.util.Objects;
 
 public class User {
 

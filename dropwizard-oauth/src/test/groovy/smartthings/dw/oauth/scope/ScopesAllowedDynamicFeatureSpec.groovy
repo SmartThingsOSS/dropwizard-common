@@ -1,6 +1,5 @@
 package smartthings.dw.oauth.scope
 
-import com.google.common.base.Optional
 import io.dropwizard.auth.AuthValueFactoryProvider
 import io.dropwizard.auth.Authenticator
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter
@@ -39,7 +38,7 @@ class ScopesAllowedDynamicFeatureSpec extends Specification {
 	@Unroll
 	def 'scopes only tests - scopes #scopes - path #path - status #status'() {
 		given:
-		OAuthToken token = new OAuthToken(Optional.absent(), scopes, "", "TOKEN")
+		OAuthToken token = new OAuthToken(Optional.empty(), scopes, "", "TOKEN")
 
 		when:
 		Response response = rule.getJerseyTest().target(path)

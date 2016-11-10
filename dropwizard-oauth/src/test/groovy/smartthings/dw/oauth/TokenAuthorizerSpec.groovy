@@ -1,6 +1,5 @@
 package smartthings.dw.oauth
 
-import com.google.common.base.Optional
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -14,7 +13,7 @@ class TokenAuthorizerSpec extends Specification {
 
 	def 'missing user will always be false'() {
 		given:
-		OAuthToken token = new OAuthToken(Optional.absent(), [], "", "token")
+		OAuthToken token = new OAuthToken(Optional.empty(), [], "", "token")
 
 		when:
 		boolean allowed = userAuthorizer.authorize(token, null)
