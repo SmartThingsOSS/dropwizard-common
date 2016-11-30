@@ -6,5 +6,6 @@ include 'dropwizard-oauth'
 include 'dropwizard-datadog'
 include 'dropwizard-protobuf'
 include 'dropwizard-async-http-client'
+include 'dropwizard-timer'
 
 rootProject.name = 'dropwizard-common'
