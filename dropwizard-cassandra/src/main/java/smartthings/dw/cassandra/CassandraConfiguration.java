@@ -234,7 +234,7 @@ public class CassandraConfiguration {
 			}
 		}
 
-		if (truststore != null && ! truststore.getPath().isEmpty()) {
+		if (truststore != null && ! Strings.isNullOrEmpty(truststore.getPath())) {
 			try {
 				LOG.info("With SSL");
 				SSLContext sslContext = getSSLContext(truststore.path, truststore.password, keystore.path, keystore.password);
