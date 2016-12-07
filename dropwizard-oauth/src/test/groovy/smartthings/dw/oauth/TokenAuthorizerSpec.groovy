@@ -13,7 +13,7 @@ class TokenAuthorizerSpec extends Specification {
 
 	def 'missing user will always be false'() {
 		given:
-		OAuthToken token = new OAuthToken(Optional.empty(), [], "", "token")
+		OAuthToken token = new OAuthToken(Optional.empty(), [], "", "token", [:])
 
 		when:
 		boolean allowed = userAuthorizer.authorize(token, null)
@@ -26,7 +26,7 @@ class TokenAuthorizerSpec extends Specification {
 	def '#requestedRole role on user with #userRoles is #allowed'() {
 		given:
 		User user = new User(UUID.randomUUID().toString(), "Santa", "", "", userRoles)
-		OAuthToken token = new OAuthToken(Optional.of(user), [], "", "token")
+		OAuthToken token = new OAuthToken(Optional.of(user), [], "", "token", [:])
 
 		when:
 		boolean actual = userAuthorizer.authorize(token, requestedRole)

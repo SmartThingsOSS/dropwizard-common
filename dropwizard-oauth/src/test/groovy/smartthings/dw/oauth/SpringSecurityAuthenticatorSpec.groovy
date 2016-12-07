@@ -195,4 +195,47 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 		actual.get().clientId == 'abcd'
 	}
 
+    def 'response with additional fields is handled as expected'() {
+        given:
+        String json = """
+		{
+		  "user_name": "charliek",
+		  "scope": ["app"],
+		  "fullName": "charliek",
+		  "exp": 3025890541,
+		  "uuid": "83540011-a053-499c-9f64-4de40df39013",
+		  "authorities": ["ROLE_SUPPORT", "ROLE_SUPERUSER", "ROLE_APPROVER"],
+		  "email": "charlie.knudsen@smartthings.com",
+		  "client_id": "abcd",
+		  "principal": "device:1234"
+		}
+		"""
+
+        when:
+        Optional<OAuthToken> actual = springSecurityAuthenticator.authenticate(token)
+
+        then:
+        1 * client.prepareGet("${config.host}/oauth/check_token?token=${token}") >> requestBuilder
+        1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
+        1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
+        1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
+        1 * requestBuilder.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.loggingId) >> requestBuilder
+        1 * requestBuilder.execute() >> future
+        1 * future.get() >> response
+        1 * response.getStatusCode() >> 200
+        1 * response.getResponseBodyAsStream() >> new ByteArrayInputStream(json.bytes)
+        0 * _
+
+        actual.isPresent()
+        actual.get().user.isPresent()
+        actual.get().user.get().userName == 'charliek'
+        actual.get().user.get().authorities == ["ROLE_SUPPORT", "ROLE_SUPERUSER", "ROLE_APPROVER"].toSet()
+        actual.get().user.get().uuid == '83540011-a053-499c-9f64-4de40df39013'
+        actual.get().user.get().email == 'charlie.knudsen@smartthings.com'
+        actual.get().user.get().fullName == 'charliek'
+        actual.get().scopes == ['app'].toSet()
+        actual.get().clientId == 'abcd'
+        actual.get().additionalInformation == ["principal": "device:1234", "exp": 3025890541]
+    }
+
 }
