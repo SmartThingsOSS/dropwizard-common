@@ -38,7 +38,7 @@ class ScopesAllowedDynamicFeatureSpec extends Specification {
 	@Unroll
 	def 'scopes only tests - scopes #scopes - path #path - status #status'() {
 		given:
-		OAuthToken token = new OAuthToken(Optional.empty(), scopes, "", "TOKEN")
+		OAuthToken token = new OAuthToken(Optional.empty(), scopes, "", "TOKEN", [:])
 
 		when:
 		Response response = rule.getJerseyTest().target(path)
@@ -64,7 +64,7 @@ class ScopesAllowedDynamicFeatureSpec extends Specification {
 	def 'role tests - scopes #scopes - path #path - status #status'() {
 		given:
 		User user = new User(null, "charliek", "", "", roles)
-		OAuthToken token = new OAuthToken(Optional.of(user), scopes, "", "TOKEN")
+		OAuthToken token = new OAuthToken(Optional.of(user), scopes, "", "TOKEN", [:])
 
 		when:
 		Response response = rule.getJerseyTest().target(path)

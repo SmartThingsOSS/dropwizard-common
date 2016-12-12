@@ -77,7 +77,7 @@ public class SpringSecurityAuthenticator implements Authenticator<String, OAuthT
 								resp.getFullName(),
 								resp.getAuthorities()));
 			}
-			return new OAuthToken(user, resp.getScopes(), resp.getClientId(), token);
+			return new OAuthToken(user, resp.getScopes(), resp.getClientId(), token, resp.getAdditionalFields());
 		} else {
 			return null;
 		}
