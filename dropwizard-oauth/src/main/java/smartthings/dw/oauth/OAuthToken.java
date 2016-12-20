@@ -14,7 +14,7 @@ public class OAuthToken implements Principal, ScopeSupport {
     private final Set<String> scopes;
     private final String clientId;
     private final String authToken;
-    private final ImmutableMap<String, Object> additionalInformation;
+    private final Map<String, Object> additionalInformation;
 
     public OAuthToken(Optional<User> user,
                       Collection<String> scopes,
@@ -22,10 +22,11 @@ public class OAuthToken implements Principal, ScopeSupport {
                       String authToken,
                       Map additionalInformation) {
         this.user = user;
-        this.scopes = ImmutableSet.copyOf(scopes);
+        this.scopes = scopes == null ? Collections.emptySet() : ImmutableSet.copyOf(scopes);
         this.clientId = clientId;
         this.authToken = authToken;
-        this.additionalInformation = ImmutableMap.copyOf(additionalInformation);
+        this.additionalInformation = additionalInformation == null ?
+            Collections.emptyMap() : ImmutableMap.copyOf(additionalInformation);
     }
 
     @Override

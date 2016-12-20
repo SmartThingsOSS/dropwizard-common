@@ -207,7 +207,8 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 		  "authorities": ["ROLE_SUPPORT", "ROLE_SUPERUSER", "ROLE_APPROVER"],
 		  "email": "charlie.knudsen@smartthings.com",
 		  "client_id": "abcd",
-		  "principal": "device:1234"
+		  "principal": "device:1234",
+		  "badEntryShouldBeIgnored": null
 		}
 		"""
 
