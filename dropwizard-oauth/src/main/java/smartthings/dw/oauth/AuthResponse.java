@@ -103,6 +103,9 @@ public class AuthResponse {
         } else if (name.equals("scope")) {
             setScopes((List<String>) value);
         } else {
+            if (value == null) {
+                return;
+            }
             other.put(name, value);
         }
     }
