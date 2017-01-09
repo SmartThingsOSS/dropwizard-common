@@ -23,8 +23,6 @@ public class PerHostPercentileTrackerFactory {
 
 	public PerHostPercentileTracker build() {
 		LOG.info("PerHostPercentileTracker - highestTrackableLatencyMillis {}", highestTrackableLatencyMillis);
-		return PerHostPercentileTracker
-			.builderWithHighestTrackableLatencyMillis(highestTrackableLatencyMillis)
-			.build();
+		return PerHostPercentileTracker.builder(highestTrackableLatencyMillis).build();
 	}
 }
