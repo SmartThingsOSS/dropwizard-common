@@ -9,3 +9,5 @@ include 'dropwizard-async-http-client'
 include 'dropwizard-timer'
 
 rootProject.name = 'dropwizard-common'
+include 'dropwizard-zipkin'
+

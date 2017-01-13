@@ -1,14 +1,11 @@
 package smartthings.dw.cassandra;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.QueryOptions;
-import com.datastax.driver.core.SSLOptions;
-import com.datastax.driver.core.Session;
+import com.datastax.driver.core.*;
 import com.google.common.base.Strings;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import smartthings.dw.cassandra.addresstranslater.AddressTranslaterFactory;
+import smartthings.dw.cassandra.addresstranslator.AddressTranslatorFactory;
 import smartthings.dw.cassandra.loadbalancing.LoadBalancingPolicyFactory;
 import smartthings.dw.cassandra.retry.RetryPolicyFactory;
 import smartthings.dw.cassandra.speculative.SpeculativeExecutionPolicyFactory;
@@ -55,7 +52,7 @@ public class CassandraConfiguration {
 	private LoadBalancingPolicyFactory loadBalancingPolicy;
 
 	@Valid
-	private AddressTranslaterFactory addressTranslaterFactory;
+	private AddressTranslatorFactory addressTranslatorFactory;
 
 	private List<String> seeds;
 
@@ -165,12 +162,12 @@ public class CassandraConfiguration {
 		this.loadBalancingPolicy = loadBalancingPolicy;
 	}
 
-	public AddressTranslaterFactory getAddressTranslaterFactory() {
-		return addressTranslaterFactory;
+	public AddressTranslatorFactory getAddressTranslatorFactory() {
+		return addressTranslatorFactory;
 	}
 
-	public void setAddressTranslaterFactory(AddressTranslaterFactory addressTranslaterFactory) {
-		this.addressTranslaterFactory = addressTranslaterFactory;
+	public void setAddressTranslatorFactory(AddressTranslatorFactory addressTranslatorFactory) {
+		this.addressTranslatorFactory = addressTranslatorFactory;
 	}
 
     public Long getShutdownTimeoutInMillis() {
@@ -220,8 +217,8 @@ public class CassandraConfiguration {
 			builder.withSpeculativeExecutionPolicy(speculativeExecutionPolicy.build());
 		}
 
-		if (addressTranslaterFactory != null) {
-			builder.withAddressTranslater(addressTranslaterFactory.build());
+		if (addressTranslatorFactory != null) {
+			builder.withAddressTranslator(addressTranslatorFactory.build());
 		}
 
 		if (queryOptions != null) {
@@ -251,7 +248,10 @@ public class CassandraConfiguration {
 			try {
 				LOG.info("With SSL");
 				SSLContext sslContext = getSSLContext(truststore.path, truststore.password, keystore.path, keystore.password);
-				builder.withSSL(new SSLOptions(sslContext, cipherSuites));
+				builder.withSSL(new JdkSSLOptions.Builder()
+                    .withSSLContext(sslContext)
+                    .withCipherSuites(cipherSuites)
+                    .build());
 			} catch (Exception e) {
 				LOG.error("Couldn't add SSL to the cluster builder.", e);
 			}
