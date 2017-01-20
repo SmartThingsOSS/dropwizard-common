@@ -1,5 +1,6 @@
 package smartthings.dw.cassandra;
 
+import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.MappingManager;
 import com.google.inject.Provides;
@@ -11,9 +12,11 @@ public class CassandraModule extends AbstractDwModule {
 
 	@Override
 	protected void configure() {
+	    requireBinding(CassandraConfiguration.class);
 		bind(CassandraHealthCheck.class).in(Scopes.SINGLETON);
 
 		registerHealthCheck(CassandraHealthCheck.class);
+		registerManaged(CassandraManaged.class);
 	}
 
 	@Provides
@@ -27,4 +30,7 @@ public class CassandraModule extends AbstractDwModule {
 	MappingManager provideMappingManager(Session session) {
 		return new MappingManager(session);
 	}
+
+	@Provides
+    Cluster provideCluster(Session session) { return session.getCluster(); }
 }

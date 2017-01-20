@@ -1,7 +1,9 @@
 package smartthings.dw.cassandra;
 
-import com.datastax.driver.core.*;
-import com.datastax.driver.core.policies.RetryPolicy;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.QueryOptions;
+import com.datastax.driver.core.SSLOptions;
+import com.datastax.driver.core.Session;
 import com.google.common.base.Strings;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class CassandraConfiguration {
 	private final static Logger LOG = LoggerFactory.getLogger(CassandraConfiguration.class);
@@ -55,6 +58,8 @@ public class CassandraConfiguration {
 	private AddressTranslaterFactory addressTranslaterFactory;
 
 	private List<String> seeds;
+
+    private Long shutdownTimeoutInMillis = TimeUnit.SECONDS.toMillis(30);
 
 	public JKSConfig getTruststore() {
 		return truststore;
@@ -168,7 +173,15 @@ public class CassandraConfiguration {
 		this.addressTranslaterFactory = addressTranslaterFactory;
 	}
 
-	public static class JKSConfig {
+    public Long getShutdownTimeoutInMillis() {
+        return shutdownTimeoutInMillis;
+    }
+
+    public void setShutdownTimeoutInMillis(Long shutdownTimeoutInMillis) {
+        this.shutdownTimeoutInMillis = shutdownTimeoutInMillis;
+    }
+
+    public static class JKSConfig {
 
 		String path;
 		String password;
