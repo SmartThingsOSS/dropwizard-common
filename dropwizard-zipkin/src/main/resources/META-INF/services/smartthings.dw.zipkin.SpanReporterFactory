@@ -1,0 +1,3 @@
+smartthings.dw.zipkin.SqsSpanReporterFactory
+smartthings.dw.zipkin.ConsoleSpanReporterFactory
+smartthings.dw.zipkin.EmptySpanReporterFactory

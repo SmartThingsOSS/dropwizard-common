@@ -1,9 +1,9 @@
 dependencies {
 	compile project(':dropwizard-guice')
 
-	compile "smartthings:cassandra-migration:0.0.11"
-	compile "com.datastax.cassandra:cassandra-driver-core:2.1.10.3"
-	compile "com.datastax.cassandra:cassandra-driver-mapping:2.1.10.3"
+	compile "smartthings:cassandra-migration:0.1.0"
+	compile "com.datastax.cassandra:cassandra-driver-core:${cassandraDriverVersion}"
+	compile "com.datastax.cassandra:cassandra-driver-mapping:${cassandraDriverVersion}"
 	compile 'org.xerial.snappy:snappy-java:1.1.2'
 	compile 'org.hdrhistogram:HdrHistogram:2.1.8'
 	compile 'net.jpountz.lz4:lz4:1.3.0'
