@@ -10,16 +10,17 @@ import smartthings.brave.asynchttpclient.TracingRequestFilter;
 
 import javax.inject.Provider;
 
-// TODO: Avoid starting a new client traces if there isn't an active server trace in progress?
 public class TracingRequestFilterProvider implements Provider<RequestFilter> {
 
     private final Brave brave;
     private final Endpoint endpoint;
+    private final TracingRequestFilterConfiguration config;
 
     @Inject
-    public TracingRequestFilterProvider(Brave brave, Endpoint endpoint) {
+    public TracingRequestFilterProvider(Brave brave, Endpoint endpoint, TracingRequestFilterConfiguration config) {
         this.brave = brave;
         this.endpoint = endpoint;
+        this.config = config;
     }
 
     @Singleton
@@ -30,7 +31,9 @@ public class TracingRequestFilterProvider implements Provider<RequestFilter> {
             brave.clientResponseInterceptor(),
             new NamedSpanNameProvider(),
             endpoint,
-            brave.clientSpanThreadBinder()
+            brave.clientSpanThreadBinder(),
+            brave.serverSpanThreadBinder(),
+            config.getStartNewTraces()
         );
     }
 }
