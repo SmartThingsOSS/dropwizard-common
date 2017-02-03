@@ -20,15 +20,21 @@ public class ZipkinAsyncHttpClientModule extends AsyncHttpClientModule {
     private final static Logger LOG = LoggerFactory.getLogger(ZipkinAsyncHttpClientModule.class);
 
     private final ZipkinConfiguration zipkinConfig;
+    private final TracingRequestFilterConfiguration tracingfilterConfig;
 
     public ZipkinAsyncHttpClientModule(ZipkinConfiguration zipkinConfig) {
         super();
         this.zipkinConfig = zipkinConfig;
+        this.tracingfilterConfig = new TracingRequestFilterConfiguration();
     }
 
-    public ZipkinAsyncHttpClientModule(ZipkinConfiguration zipkinConfig, AsyncHttpClientConfig ahcConfig) {
+    public ZipkinAsyncHttpClientModule(ZipkinConfiguration zipkinConfig,
+                                       AsyncHttpClientConfig ahcConfig,
+                                       TracingRequestFilterConfiguration tracingfilterConfig
+                                       ) {
         super(ahcConfig);
         this.zipkinConfig = zipkinConfig;
+        this.tracingfilterConfig = tracingfilterConfig;
     }
 
     @Override
