@@ -9,7 +9,7 @@ public class ZipkinConfiguration {
     @NotNull
     private String serviceName;
 
-    private String serviceHost = "127.0.0.1";
+    private String serviceHost = null;
 
     private int servicePort = 8080;
 
