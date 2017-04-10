@@ -17,7 +17,7 @@ class LoggingFilterSpec extends Specification {
 		MDC.clear()
 	}
 
-	def 'null and empty values return a random UUID'() {
+	def 'null and empty values return a random UUID for correlation ID'() {
 		when:
 		filter.doFilter(request, response, chain)
 
@@ -27,6 +27,7 @@ class LoggingFilterSpec extends Specification {
 			return
 		}
 		1 * request.getHeader(LoggingContext.CORRELATION_ID_HEADER) >> id
+		1 * request.getHeader(LoggingContext.LOG_LEVEL_HEADER) >> null
 		0 * _
 
 		// context is cleared when filter exits
@@ -35,6 +36,26 @@ class LoggingFilterSpec extends Specification {
 		where:
 		id << [null, '']
 	}
+
+    def 'null and empty values return empty dynamic log level'() {
+        when:
+        filter.doFilter(request, response, chain)
+
+        then:
+        1 * chain.doFilter(request, response) >> {
+            assert LoggingContext.logLevel == null
+            return
+        }
+        1 * request.getHeader(LoggingContext.CORRELATION_ID_HEADER) >> null
+        1 * request.getHeader(LoggingContext.LOG_LEVEL_HEADER) >> logLevel
+        0 * _
+
+        // context is cleared when filter exits
+        LoggingContext.logLevel == null
+
+        where:
+        logLevel << [null, '']
+    }
 
 	def 'value return the header UUID if it exists'() {
 		when:
@@ -46,6 +67,7 @@ class LoggingFilterSpec extends Specification {
 			return
 		}
 		1 * request.getHeader(LoggingContext.CORRELATION_ID_HEADER) >> id
+        1 * request.getHeader(LoggingContext.LOG_LEVEL_HEADER) >> null
 		0 * _
 
 		// context is cleared when filter exits
@@ -55,4 +77,46 @@ class LoggingFilterSpec extends Specification {
 		where:
 		id << ['test1', 'hello2']
 	}
+
+    def 'MDC dynamic log level is set'() {
+        when:
+        filter.doFilter(request, response, chain)
+
+        then:
+        1 * chain.doFilter(request, response) >> {
+            assert LoggingContext.logLevel == logLevel
+            return
+        }
+        1 * request.getHeader(LoggingContext.CORRELATION_ID_HEADER) >> null
+        1 * request.getHeader(LoggingContext.LOG_LEVEL_HEADER) >> logLevel
+        0 * _
+
+        // context is cleared when filter exits
+        LoggingContext.logLevel == null
+
+
+        where:
+        logLevel << ['DEBUG', 'INFO']
+    }
+
+    def 'invalid dynamic log level is ignored'() {
+        when:
+        filter.doFilter(request, response, chain)
+
+        then:
+        1 * chain.doFilter(request, response) >> {
+            assert LoggingContext.logLevel == null
+            return
+        }
+        1 * request.getHeader(LoggingContext.CORRELATION_ID_HEADER) >> null
+        1 * request.getHeader(LoggingContext.LOG_LEVEL_HEADER) >> logLevel
+        0 * _
+
+        // context is cleared when filter exits
+        LoggingContext.logLevel == null
+
+
+        where:
+        logLevel << ['YOLO']
+    }
 }
