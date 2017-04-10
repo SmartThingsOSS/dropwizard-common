@@ -1,0 +1,2 @@
+smartthings.dw.logging.filter.DynamicThresholdLoggerFilterFactory
+smartthings.dw.logging.filter.ThresholdLevelFilterFactory
