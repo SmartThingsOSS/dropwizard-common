@@ -1,7 +1,7 @@
 package smartthings.dw.zipkin;
 
+import com.github.kristofa.brave.BoundarySampler;
 import com.github.kristofa.brave.Brave;
-import com.github.kristofa.brave.Sampler;
 import com.google.common.net.InetAddresses;
 import com.google.inject.TypeLiteral;
 import com.twitter.zipkin.gen.Endpoint;
@@ -39,7 +39,7 @@ public class ZipkinModule extends AbstractDwModule {
             config.getServiceName()
         )
             .reporter(reporter)
-            .traceSampler(Sampler.create(config.getSampleRate()))
+            .traceSampler(BoundarySampler.create(config.getSampleRate()))
             .traceId128Bit(config.isTraceId128Bit())
             .build();
 
