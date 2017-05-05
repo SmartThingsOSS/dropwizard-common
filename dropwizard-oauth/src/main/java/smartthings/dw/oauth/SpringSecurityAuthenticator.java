@@ -43,11 +43,12 @@ public class SpringSecurityAuthenticator implements Authenticator<String, OAuthT
 	@Override
 	public Optional<OAuthToken> authenticate(String token) throws AuthenticationException {
 		try {
-			Response resp = client.prepareGet(authUrl(token))
+			Response resp = client.preparePost(config.getHost() + "/oauth/check_token")
 				.setRequestTimeout(timeout)
 				.setRealm(realm)
 				.addHeader("Accept", "application/json")
 				.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.getLoggingId())
+				.addFormParam("token", URL_ESCAPER.escape(token))
 				.execute()
 				.get();
 
@@ -81,9 +82,5 @@ public class SpringSecurityAuthenticator implements Authenticator<String, OAuthT
 		} else {
 			return null;
 		}
-	}
-
-	private String authUrl(String token) {
-		return String.format("%s/oauth/check_token?token=%s", config.getHost(), URL_ESCAPER.escape(token));
 	}
 }
