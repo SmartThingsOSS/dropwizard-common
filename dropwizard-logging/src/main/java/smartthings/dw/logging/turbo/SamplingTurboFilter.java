@@ -8,6 +8,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class SamplingTurboFilter extends TurboFilter {
 
@@ -17,8 +18,6 @@ public class SamplingTurboFilter extends TurboFilter {
     private final static double MINIMAL_SAMPLE_RATE = 1.0 / SAMPLE_RANGE;
 
     private long boundary = SAMPLE_RANGE;
-
-    private Random rand = new Random();
 
     public void setSampleRate(Double sampleRate) {
         if (sampleRate != 0 && (sampleRate < MINIMAL_SAMPLE_RATE || sampleRate > 1)) {
@@ -38,7 +37,7 @@ public class SamplingTurboFilter extends TurboFilter {
             return FilterReply.NEUTRAL;
         }
         if (SAMPLING_MARKER.equals(marker)) {
-            if (rand.nextInt(SAMPLE_RANGE) <= boundary - 1) {
+            if (ThreadLocalRandom.current().nextInt(SAMPLE_RANGE) <= boundary - 1) {
                 return FilterReply.NEUTRAL;
             } else {
                 return FilterReply.DENY;
