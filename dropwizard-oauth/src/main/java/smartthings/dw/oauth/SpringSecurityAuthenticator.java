@@ -7,10 +7,7 @@ import com.google.common.primitives.Ints;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.jackson.Jackson;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.Realm;
-import org.asynchttpclient.Response;
+import org.asynchttpclient.*;
 import smartthings.dw.logging.LoggingContext;
 
 import javax.inject.Inject;
@@ -43,14 +40,15 @@ public class SpringSecurityAuthenticator implements Authenticator<String, OAuthT
 	@Override
 	public Optional<OAuthToken> authenticate(String token) throws AuthenticationException {
 		try {
-			Response resp = client.preparePost(config.getHost() + "/oauth/check_token")
-				.setRequestTimeout(timeout)
-				.setRealm(realm)
-				.addHeader("Accept", "application/json")
-				.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.getLoggingId())
-				.addFormParam("token", URL_ESCAPER.escape(token))
-				.execute()
-				.get();
+			BoundRequestBuilder reqBuilder = client.preparePost(config.getHost() + "/oauth/check_token")
+					.setRequestTimeout(timeout)
+					.setRealm(realm)
+					.addHeader("Accept", "application/json")
+					.addFormParam("token", URL_ESCAPER.escape(token));
+			if (LoggingContext.getLoggingId() != null) {
+				reqBuilder.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.getLoggingId());
+			}
+			Response resp = reqBuilder.execute().get();
 
 			int code = resp.getStatusCode();
 			if (code == 200) {
