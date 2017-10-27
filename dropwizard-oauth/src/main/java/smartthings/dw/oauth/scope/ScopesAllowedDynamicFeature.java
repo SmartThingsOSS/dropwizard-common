@@ -46,17 +46,17 @@ public class ScopesAllowedDynamicFeature implements DynamicFeature {
 
 		// ScopesAllowed on the method takes precedence over class level annotations
 		ScopesAllowed ra = am.getAnnotation(ScopesAllowed.class);
-		FineGrainedScopesAllowed fgra = am.getAnnotation(FineGrainedScopesAllowed.class);
+		FineGrainedScopeAllowed[] fgra = am.getAnnotationsByType(FineGrainedScopeAllowed.class);
 
 		if (ra == null) {
             ra = resourceInfo.getResourceClass().getAnnotation(ScopesAllowed.class);
         }
 
-        if (fgra == null) {
-            fgra = resourceInfo.getResourceClass().getAnnotation(FineGrainedScopesAllowed.class);
+        if (fgra.length == 0) {
+            fgra = resourceInfo.getResourceClass().getAnnotationsByType(FineGrainedScopeAllowed.class);
         }
 
-		if ((ra != null) || (fgra != null)) {
+		if ((ra != null) || (fgra.length > 0)) {
 			configuration.register(new ScopesAllowedRequestFilter(ra, fgra));
 		}
 	}
@@ -68,16 +68,17 @@ public class ScopesAllowedDynamicFeature implements DynamicFeature {
 		private final FineGrainedScopeAllowed[] fineGrainedScopesAllowed;
 
 		ScopesAllowedRequestFilter(final ScopesAllowed scopesAllowed,
-                                   final FineGrainedScopesAllowed fineGrainedScopesAllowed) {
+                                   final FineGrainedScopeAllowed[] fineGrainedScopesAllowed) {
 			if ((scopesAllowed != null) && (scopesAllowed.value() != null)) {
 			    this.scopesAllowed = scopesAllowed.value();
             } else {
                 this.scopesAllowed = new String[]{};
             }
 
-            if ((fineGrainedScopesAllowed != null) && (fineGrainedScopesAllowed.value() != null)) {
-			    this.fineGrainedScopesAllowed = fineGrainedScopesAllowed.value();
-            } else {
+            if ((fineGrainedScopesAllowed != null)) {
+			    this.fineGrainedScopesAllowed = fineGrainedScopesAllowed;
+            }
+            else {
 			    this.fineGrainedScopesAllowed = new FineGrainedScopeAllowed[]{};
             }
 

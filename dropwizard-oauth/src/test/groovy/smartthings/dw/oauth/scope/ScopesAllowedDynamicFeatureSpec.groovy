@@ -155,7 +155,7 @@ class ScopesAllowedDynamicFeatureSpec extends Specification {
 
     def 'token with no principal rejects access'() {
         given:
-        OAuthToken token = new OAuthToken(null, null, "", "TOKEN", [:])
+        OAuthToken token = new OAuthToken(Optional.EMPTY, null, "", "TOKEN", [:])
 
         when:
         Response response = rule.getJerseyTest().target("/fineGrained/hubId/123456").
@@ -166,24 +166,23 @@ class ScopesAllowedDynamicFeatureSpec extends Specification {
         0 * _
 
         and:
-        response.status != 500
+        response.status == 403
     }
 
     @Unroll
     def 'when invalid fine grained specification #scopeVal - #varName throws exception'() {
         given:
-        FineGrainedScopesAllowed scopes = Mock()
         FineGrainedScopeAllowed scope = Mock()
         VarInfo varInfo = Mock()
 
         when:
-        new ScopesAllowedDynamicFeature.ScopesAllowedRequestFilter(null, scopes)
+        new ScopesAllowedDynamicFeature.ScopesAllowedRequestFilter(null,
+            (FineGrainedScopeAllowed[])[scope].toArray())
 
         then:
         thrown(IllegalArgumentException)
 
         and:
-        2 * scopes.value() >> [scope]
         1 * scope.varInfo() >> varInfo
         1 * varInfo.name() >> varName
         1 * scope.scope() >> scopeVal
