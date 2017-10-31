@@ -1,50 +1,64 @@
 package smartthings.dw.asynchttpclient
 
-import com.github.kristofa.brave.Brave
+import brave.Tracing
+import brave.http.HttpTracing
+import brave.propagation.CurrentTraceContext
+import brave.propagation.Propagation
 import com.google.inject.Guice
 import com.google.inject.Injector
-import com.twitter.zipkin.gen.Endpoint
 import org.asynchttpclient.AsyncHttpClient
 import org.asynchttpclient.DefaultAsyncHttpClient
-import smartthings.brave.asynchttpclient.TracingRequestFilter
 import smartthings.dw.guice.AbstractDwModule
-import smartthings.dw.zipkin.ZipkinConfiguration
 import spock.lang.Specification
 
 class ZipkinAsyncHttpClientModuleSpec extends Specification {
 
-    ZipkinConfiguration config
-    Brave brave
-    Endpoint endpoint
+    HttpTracing httpTracing
+    Tracing tracing
+    CurrentTraceContext currentTraceContext
+    Propagation<String> propagation
 
     private static class DepModule extends AbstractDwModule {
-        private final Brave brave
-        private final Endpoint endpoint
-        DepModule(Brave brave, Endpoint endpoint) {
-            this.brave = brave
-            this.endpoint = endpoint
+        private final HttpTracing httpTracing
+        DepModule(HttpTracing httpTracing) {
+            this.httpTracing = httpTracing
         }
         @Override
         protected void configure() {
-            bind(Brave).toInstance(brave)
-            bind(Endpoint).toInstance(endpoint)
+            bind(HttpTracing).toInstance(httpTracing)
         }
     }
 
     def setup() {
-        config = Mock(ZipkinConfiguration)
-        brave = Mock(Brave)
-        endpoint = Mock(Endpoint)
+        httpTracing = Mock(HttpTracing)
+        tracing = Mock(Tracing)
+        currentTraceContext = Mock(CurrentTraceContext)
+        propagation = Mock(Propagation)
+
+        httpTracing.tracing() >> tracing
+        httpTracing.serverName() >> "test-server"
+        tracing.currentTraceContext() >> currentTraceContext
+        tracing.propagation() >> propagation
+
     }
 
     def 'bind Endpoint, add tracing request filter'() {
         given:
-        Injector injector = Guice.createInjector(new DepModule(brave, endpoint), new ZipkinAsyncHttpClientModule())
+        def overrides = [
+            connectTimeout: 100,
+            acceptAnyCertificate: true,
+            readTimeout: 1000
+        ]
+        Injector injector = Guice.createInjector(new DepModule(httpTracing),
+            new ZipkinAsyncHttpClientModule(new AsyncHttpClientConfig(properties: overrides)))
 
         when:
         DefaultAsyncHttpClient client = injector.getInstance(AsyncHttpClient)
 
         then:
-        client.config.requestFilters.find { it instanceof TracingRequestFilter }
+        overrides.each { k, v ->
+            assert client.config[k] == v
+        }
+        client.config.requestFilters.size() == 2
     }
 }

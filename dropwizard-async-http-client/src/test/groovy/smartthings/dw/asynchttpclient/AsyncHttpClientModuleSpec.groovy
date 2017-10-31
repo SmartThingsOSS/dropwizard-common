@@ -7,8 +7,9 @@ import com.google.inject.multibindings.Multibinder
 import org.asynchttpclient.AsyncHttpClient
 import org.asynchttpclient.DefaultAsyncHttpClient
 import org.asynchttpclient.filter.RequestFilter
+import spock.lang.Specification
 
-class AsyncHttpClientModuleSpec extends spock.lang.Specification {
+class AsyncHttpClientModuleSpec extends Specification {
 
 	byte[] properties
 
@@ -35,10 +36,6 @@ class AsyncHttpClientModuleSpec extends spock.lang.Specification {
 		client.config.requestFilters[0] instanceof CorrelationIdFilter
 		client.config.connectTimeout == 5000
 		client.config.acceptAnyCertificate == false
-
-		and: 'default overrides are used'
-		client.config.requestTimeout == 5000
-		client.config.readTimeout == 5000
 	}
 
 	def 'override config'() {
@@ -48,7 +45,7 @@ class AsyncHttpClientModuleSpec extends spock.lang.Specification {
 			acceptAnyCertificate: true,
 			readTimeout: 1000
 		]
-		Injector injector = Guice.createInjector(new AsyncHttpClientModule(new AsyncHttpClientConfig(properties: overrides)))
+        Injector injector = Guice.createInjector(new AsyncHttpClientModule(new AsyncHttpClientConfig(properties: overrides)))
 
 		when:
 		DefaultAsyncHttpClient client = injector.getInstance(AsyncHttpClient)
