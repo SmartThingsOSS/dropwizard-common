@@ -1,6 +1,7 @@
 include 'dropwizard-guice'
 include 'dropwizard-buildinfo'
-include 'dropwizard-cassandra'
+//see: https://github.com/SmartThingsOSS/dropwizard-common#running-12x
+//include 'dropwizard-cassandra'
 include 'dropwizard-logging'
 include 'dropwizard-oauth'
 include 'dropwizard-datadog'
@@ -9,5 +10,6 @@ include 'dropwizard-async-http-client'
 include 'dropwizard-timer'
 
 rootProject.name = 'dropwizard-common'
-include 'dropwizard-zipkin'
+//see: https://github.com/SmartThingsOSS/dropwizard-common#running-12x
+//include 'dropwizard-zipkin'
 
