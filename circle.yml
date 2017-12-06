@@ -31,3 +31,13 @@ deployment:
     branch: release
     commands:
       - ./gradlew bintrayUpload
+
+  1.2.x-snapshot:
+    branch: 1.2.x-master
+    commands:
+      - ./gradlew publish -PsmartThingsUserName=$ARTIFACTORY_USERNAME -PsmartThingsPassword=$ARTIFACTORY_PASSWORD
+
+  1.2.x-release:
+    branch: 1.2.x-release
+    commands:
+      - ./gradlew bintrayUpload
