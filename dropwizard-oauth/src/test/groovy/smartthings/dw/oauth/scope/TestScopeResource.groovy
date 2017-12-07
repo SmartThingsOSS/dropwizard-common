@@ -1,5 +1,7 @@
 package smartthings.dw.oauth.scope
 
+import smartthings.dw.guice.WebResource
+
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.GET
 import javax.ws.rs.HeaderParam
@@ -9,7 +11,7 @@ import javax.ws.rs.QueryParam
 
 @ScopesAllowed("admin")
 @Path("/")
-class TestScopeResource {
+class TestScopeResource implements WebResource {
 
 	@GET
 	@Path("/classProtected")
