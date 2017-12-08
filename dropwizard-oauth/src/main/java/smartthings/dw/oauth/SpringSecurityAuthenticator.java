@@ -56,8 +56,8 @@ public class SpringSecurityAuthenticator implements OAuthAuthenticator {
 
 			int code = resp.getStatusCode();
 			if (code == 200) {
-				AuthResponse oauth = MAPPER.readValue(resp.getResponseBodyAsStream(), AuthResponse.class);
-				return Optional.ofNullable(buildToken(oauth, token));
+				AuthResponse authResponse = MAPPER.readValue(resp.getResponseBodyAsStream(), AuthResponse.class);
+				return Optional.ofNullable(authResponse.toOAuthToken(token));
 			} else if (code >= 400 && code < 500) {
 				return Optional.empty();
 			} else {
@@ -65,24 +65,6 @@ public class SpringSecurityAuthenticator implements OAuthAuthenticator {
 			}
 		} catch (Exception e) {
 			throw new AuthenticationException("Exception when trying to validate authentication", e);
-		}
-	}
-
-	private OAuthToken buildToken(AuthResponse resp, String token) {
-		if (resp.getClientId() != null && !resp.getClientId().isEmpty()) {
-			Optional<User> user = Optional.empty();
-			if (resp.getUserName() != null && !resp.getUserName().isEmpty()) {
-				// User will be absent in the case of client only tokens
-				user = Optional.of(
-						new User(resp.getUuid(),
-								resp.getUserName(),
-								resp.getEmail(),
-								resp.getFullName(),
-								resp.getAuthorities()));
-			}
-			return new OAuthToken(user, resp.getScopes(), resp.getClientId(), token, resp.getAdditionalFields());
-		} else {
-			return null;
 		}
 	}
 }
