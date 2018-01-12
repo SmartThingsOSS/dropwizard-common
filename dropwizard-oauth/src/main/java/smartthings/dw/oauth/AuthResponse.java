@@ -1,12 +1,10 @@
 package smartthings.dw.oauth;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = false)
 public class AuthResponse {
@@ -107,6 +105,25 @@ public class AuthResponse {
                 return;
             }
             other.put(name, value);
+        }
+    }
+
+    @JsonIgnore
+    public OAuthToken toOAuthToken(String token) {
+        if (this.getClientId() != null && !this.getClientId().isEmpty()) {
+            Optional<User> user = Optional.empty();
+            if (this.getUserName() != null && !this.getUserName().isEmpty()) {
+                // User will be absent in the case of client only tokens
+                user = Optional.of(
+                    new User(this.getUuid(),
+                        this.getUserName(),
+                        this.getEmail(),
+                        this.getFullName(),
+                        this.getAuthorities()));
+            }
+            return new OAuthToken(user, this.getScopes(), this.getClientId(), token, this.getAdditionalFields());
+        } else {
+            return null;
         }
     }
 }
