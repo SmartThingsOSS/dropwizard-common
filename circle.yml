@@ -2,6 +2,10 @@ machine:
   java:
     version:
       oraclejdk8
+  environment:
+    TERM: dumb
+    JAVA_OPTS: -Djava.awt.headless=true -server -Xmx1G
+    GRADLE_OPTS: '-Xmx256M -Dorg.gradle.daemon=true -Dorg.gradle.jvmargs="-Xmx256M -XX:+HeapDumpOnOutOfMemoryError"'
 
 dependencies:
   override:
@@ -13,7 +17,8 @@ dependencies:
 
 test:
   override:
-    - ./gradlew check jacocoTestReport
+    - ./gradlew check
+    - ./gradlew jacocoTestReport
 
   post:
     - 'find . -type f -name "*.xml" | grep "build/test-results" | xargs cp -t $CIRCLE_TEST_REPORTS/'
