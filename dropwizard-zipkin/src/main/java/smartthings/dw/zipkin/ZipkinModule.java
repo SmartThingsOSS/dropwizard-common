@@ -1,13 +1,14 @@
 package smartthings.dw.zipkin;
 
-import com.github.kristofa.brave.BoundarySampler;
-import com.github.kristofa.brave.Brave;
+import brave.Tracing;
+import brave.http.HttpTracing;
+import brave.sampler.BoundarySampler;
 import com.google.common.net.InetAddresses;
 import com.google.inject.TypeLiteral;
-import com.twitter.zipkin.gen.Endpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import smartthings.dw.guice.AbstractDwModule;
+import zipkin.Endpoint;
 import zipkin.Span;
 import zipkin.reporter.Reporter;
 
@@ -33,20 +34,18 @@ public class ZipkinModule extends AbstractDwModule {
     protected void configure() {
         Endpoint endpoint = getHostEndpoint();
         Reporter<Span> reporter = config.getReporter().build();
-        Brave brave = new Brave.Builder(
-            endpoint.ipv4,
-            config.getServicePort(),
-            config.getServiceName()
-        )
+        Tracing tracing = Tracing.newBuilder()
+            .localEndpoint(endpoint)
+            .localServiceName(config.getServiceName())
             .reporter(reporter)
-            .traceSampler(BoundarySampler.create(config.getSampleRate()))
+            .sampler(BoundarySampler.create(config.getSampleRate()))
             .traceId128Bit(config.isTraceId128Bit())
             .build();
 
         bind(new TypeLiteral<Reporter<Span>>() {
-        })
-            .toInstance(reporter);
-        bind(Brave.class).toInstance(brave);
+        }).toInstance(reporter);
+        bind(Tracing.class).toInstance(tracing);
+        bind(HttpTracing.class).toInstance(HttpTracing.create(tracing));
         bind(Endpoint.class).toInstance(endpoint);
     }
 
@@ -54,7 +53,7 @@ public class ZipkinModule extends AbstractDwModule {
         return InetAddresses.coerceToInteger(InetAddresses.forString(ip));
     }
 
-    Endpoint getHostEndpoint() {
+    private Endpoint getHostEndpoint() {
         int ipv4 = 127 << 24 | 1;
         try {
             if (config.getServiceHost() != null) {

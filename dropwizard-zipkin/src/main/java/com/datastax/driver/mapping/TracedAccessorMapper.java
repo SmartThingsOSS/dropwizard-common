@@ -6,7 +6,7 @@ import com.google.common.base.Converter;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import smartthings.brave.cassandra.NamedPreparedStatement;
+import smartthings.brave.cassandra.driver.NamedPreparedStatement;
 
 import javax.annotation.Nullable;
 import java.util.List;

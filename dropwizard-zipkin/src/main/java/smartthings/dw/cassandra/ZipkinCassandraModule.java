@@ -1,15 +1,14 @@
 package smartthings.dw.cassandra;
 
+import brave.Tracing;
+import brave.cassandra.driver.TracingSession;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.TracedMappingManager;
-import com.github.kristofa.brave.Brave;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
-import smartthings.brave.cassandra.TracedSession;
 import smartthings.dw.guice.AbstractDwModule;
-import smartthings.dw.zipkin.ZipkinConfiguration;
 
 /**
  * ZipkinCassandraModule does not extend smartthings.dw.cassandra.CassandraModule because
@@ -32,8 +31,8 @@ public class ZipkinCassandraModule extends AbstractDwModule {
 
     @Provides
     @Singleton
-    Session provideTracedSession(ZipkinConfiguration zipkinConfiguration, Brave brave) {
-        return TracedSession.create(baseSession, brave, zipkinConfiguration.getServiceName());
+    Session provideTracedSession(Tracing tracing) {
+        return TracingSession.create(tracing, baseSession);
     }
 
     @Provides

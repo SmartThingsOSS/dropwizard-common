@@ -1,12 +1,13 @@
 package smartthings.dw.zipkin
 
-import com.github.kristofa.brave.Brave
+import brave.Tracing
+import brave.http.HttpTracing
 import com.google.inject.Guice
 import com.google.inject.Injector
 import com.google.inject.Key
 import com.google.inject.TypeLiteral
-import com.twitter.zipkin.gen.Endpoint
 import spock.lang.Specification
+import zipkin.Endpoint
 import zipkin.Span
 import zipkin.reporter.Reporter
 
@@ -30,10 +31,12 @@ class ZipkinModuleSpec extends Specification {
         Injector injector = Guice.createInjector(new ZipkinModule(config))
 
         when:
-        Brave brave = injector.getInstance(Brave)
+        Tracing tracing = injector.getInstance(Tracing)
+        HttpTracing httpTracing = injector.getInstance(HttpTracing)
 
         then:
-        brave != null
+        tracing != null
+        httpTracing != null
 
         when:
         Reporter<Span> reporter = injector.getInstance(Key.get(new TypeLiteral<Reporter<Span>>() {}))
@@ -45,7 +48,7 @@ class ZipkinModuleSpec extends Specification {
         Endpoint ep = injector.getInstance(Endpoint)
 
         then:
-        ep.service_name == serviceName
+        ep.serviceName == serviceName
         ep.port.toInteger() == servicePort
         ep.ipv4 == (127 << 24 | 1)
     }
