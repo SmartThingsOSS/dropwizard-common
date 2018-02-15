@@ -1,0 +1,4 @@
+---
+keyspace: keyspace
+validationQuery: custom query
+validationQueryIdempotence: false
