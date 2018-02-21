@@ -20,11 +20,8 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@ValidCassandraConfiguration
 public class CassandraConfiguration {
 	private final static Logger LOG = LoggerFactory.getLogger(CassandraConfiguration.class);
-
-	protected final static String  DEFAULT_VALIDATION_QUERY = "SELECT * FROM system.schema_keyspaces";
 
 	private String[] cipherSuites = new String[]{"TLS_RSA_WITH_AES_128_CBC_SHA", "TLS_RSA_WITH_AES_256_CBC_SHA"};
 
@@ -36,10 +33,6 @@ public class CassandraConfiguration {
 
 	@NotEmpty
 	private String keyspace;
-
-	private String validationQuery;
-
-    protected Boolean validationQueryIdempotence;
 
 	private String migrationFile = "/migrations/cql.changelog";
 	private Boolean autoMigrate = false;
@@ -110,27 +103,10 @@ public class CassandraConfiguration {
 		this.seeds = seeds;
 	}
 
-	public String getValidationQuery() {
-	    if (validationQuery == null) {
-	        return DEFAULT_VALIDATION_QUERY;
-        }
-		return validationQuery;
-	}
-
-	public boolean getValidationQueryIdempotence() {
-	    if (DEFAULT_VALIDATION_QUERY.equals(getValidationQuery())) {
-	        return true;
-        }
-
-        if (validationQueryIdempotence != null) {
-            return validationQueryIdempotence;
-        }
-
-        return false;
-    }
-
-	public void setValidationQuery(String validationQuery) {
-		this.validationQuery = validationQuery;
+	public RegularStatement getValidationQuery() {
+	    SimpleStatement statement = new  SimpleStatement("SELECT * FROM system.schema_keyspaces");
+	    statement.setIdempotent(true);
+	    return statement;
 	}
 
 	public String getMigrationFile() {
