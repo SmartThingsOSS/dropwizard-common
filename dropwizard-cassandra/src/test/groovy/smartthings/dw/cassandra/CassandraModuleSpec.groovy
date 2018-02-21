@@ -2,6 +2,7 @@ package smartthings.dw.cassandra
 
 import com.codahale.metrics.health.HealthCheck
 import com.datastax.driver.core.Cluster
+import com.datastax.driver.core.PreparedStatement
 import com.datastax.driver.core.Session
 import com.datastax.driver.mapping.MappingManager
 import com.google.inject.Guice
@@ -11,7 +12,11 @@ import io.dropwizard.lifecycle.Managed
 import smartthings.dw.guice.AbstractDwModule
 import spock.lang.Specification
 
+
 class CassandraModuleSpec extends Specification {
+
+    final static String validationQuery = 'validation query'
+    final static boolean validationQueryIdempotence = true
 
     CassandraConfiguration config
     Session session
@@ -36,6 +41,8 @@ class CassandraModuleSpec extends Specification {
         cluster = Mock(Cluster)
         config.buildSession() >> session
         config.getShutdownTimeoutInMillis() >> 30000
+        config.getValidationQuery() >> validationQuery
+        config.getValidationQueryIdempotence() >> validationQueryIdempotence
         session.getCluster() >> cluster
     }
 
