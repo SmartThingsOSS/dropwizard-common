@@ -2,7 +2,9 @@ package smartthings.dw.cassandra
 
 import com.codahale.metrics.health.HealthCheck
 import com.datastax.driver.core.Cluster
+import com.datastax.driver.core.PreparedStatement
 import com.datastax.driver.core.Session
+import com.datastax.driver.core.SimpleStatement
 import com.datastax.driver.mapping.MappingManager
 import com.google.inject.Guice
 import com.google.inject.Injector
@@ -10,6 +12,7 @@ import com.google.inject.TypeLiteral
 import io.dropwizard.lifecycle.Managed
 import smartthings.dw.guice.AbstractDwModule
 import spock.lang.Specification
+
 
 class CassandraModuleSpec extends Specification {
 
@@ -36,6 +39,7 @@ class CassandraModuleSpec extends Specification {
         cluster = Mock(Cluster)
         config.buildSession() >> session
         config.getShutdownTimeoutInMillis() >> 30000
+        config.getValidationQuery() >> new SimpleStatement('')
         session.getCluster() >> cluster
     }
 
