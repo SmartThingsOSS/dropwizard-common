@@ -3,7 +3,7 @@ coverage:
     patch: false
     project:
       default:
-        target: '59'
+        target: auto
     changes: false
 comment:
   layout: "header, diff, changes, sunburst, uncovered, tree"

@@ -1,5 +1,6 @@
 package smartthings.dw.cassandra;
 
+import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,12 +11,12 @@ import javax.inject.Inject;
 public class CassandraHealthCheck extends NamedHealthCheck {
 	private final static Logger LOG = LoggerFactory.getLogger(CassandraHealthCheck.class);
 	private final Session session;
-	private final String validationQuery;
+	private final PreparedStatement validationQuery;
 
 	@Inject
 	public CassandraHealthCheck(Session session, CassandraConfiguration config) {
 		this.session = session;
-		this.validationQuery = config.getValidationQuery();
+		this.validationQuery = session.prepare(config.getValidationQuery());
 	}
 
 	@Override
@@ -26,7 +27,7 @@ public class CassandraHealthCheck extends NamedHealthCheck {
 	@Override
 	protected Result check() throws Exception {
 		try {
-			session.execute(validationQuery);
+			session.execute(validationQuery.bind());
 			return Result.healthy();
 		} catch (Exception e) {
 			LOG.error("Cassandra health check error", e);
