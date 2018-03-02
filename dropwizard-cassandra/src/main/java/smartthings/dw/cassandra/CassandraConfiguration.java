@@ -34,9 +34,6 @@ public class CassandraConfiguration {
 	@NotEmpty
 	private String keyspace;
 
-	@NotEmpty
-	private String validationQuery = "SELECT * FROM system.schema_keyspaces";
-
 	private String migrationFile = "/migrations/cql.changelog";
 	private Boolean autoMigrate = false;
 
@@ -106,12 +103,10 @@ public class CassandraConfiguration {
 		this.seeds = seeds;
 	}
 
-	public String getValidationQuery() {
-		return validationQuery;
-	}
-
-	public void setValidationQuery(String validationQuery) {
-		this.validationQuery = validationQuery;
+	public RegularStatement getValidationQuery() {
+	    SimpleStatement statement = new  SimpleStatement("SELECT * FROM system.schema_keyspaces");
+	    statement.setIdempotent(true);
+	    return statement;
 	}
 
 	public String getMigrationFile() {
