@@ -6,7 +6,6 @@ import com.google.common.net.UrlEscapers;
 import com.google.common.primitives.Ints;
 import com.google.inject.Singleton;
 import io.dropwizard.auth.AuthenticationException;
-import io.dropwizard.auth.Authenticator;
 import io.dropwizard.jackson.Jackson;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -44,6 +43,7 @@ public class SpringSecurityAuthenticator implements OAuthAuthenticator {
 
 	@Override
 	public Optional<OAuthToken> authenticate(String token) throws AuthenticationException {
+		int code;
 		try {
 			Response resp = client.preparePost(config.getHost() + "/oauth/check_token")
 				.setRequestTimeout(timeout)
@@ -54,17 +54,21 @@ public class SpringSecurityAuthenticator implements OAuthAuthenticator {
 				.execute()
 				.get();
 
-			int code = resp.getStatusCode();
-			if (code == 200) {
-				AuthResponse authResponse = MAPPER.readValue(resp.getResponseBodyAsStream(), AuthResponse.class);
-				return Optional.ofNullable(authResponse.toOAuthToken(token));
-			} else if (code >= 400 && code < 500) {
-				return Optional.empty();
-			} else {
-				throw new AuthenticationException(String.format("Invalid status code found %d", resp.getStatusCode()));
-			}
-		} catch (Exception e) {
-			throw new AuthenticationException("Exception when trying to validate authentication", e);
-		}
+			code = resp.getStatusCode();
+            if (code == 200) {
+                AuthResponse authResponse = MAPPER.readValue(resp.getResponseBodyAsStream(), AuthResponse.class);
+                return Optional.ofNullable(authResponse.toOAuthToken(token));
+            }
+        } catch (Exception e) {
+            throw new AuthenticationException("Exception when trying to validate authentication", e);
+        }
+
+        if (code >= 400 && code < 500) {
+            return Optional.empty();
+        } else if (code == 520) {
+            throw new SlowResponseException();
+        }
+
+        throw new AuthenticationException(String.format("Invalid status code found %d", code));
 	}
 }
