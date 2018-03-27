@@ -17,6 +17,8 @@ import smartthings.dw.guice.DwGuice
 import smartthings.dw.oauth.scope.TestScopeResource
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 
 class AuthModuleSpec extends Specification {
@@ -74,6 +76,36 @@ class AuthModuleSpec extends Specification {
         assert response.statusCode == 200
     }
 
+    @Unroll
+    void 'when the oauth reponse is #oauthStatus the request response is #requestStatus'() {
+        given:
+        String token = UUID.randomUUID().toString()
+        authMock
+            .stubFor(post(urlEqualTo("/oauth/check_token"))
+            .withRequestBody(containing(token))
+            .willReturn(aResponse().withStatus(oauthStatus))
+        )
+
+        when:
+        Response response = client.prepareGet("http://localhost:${app.getLocalPort()}/methodProtected")
+            .addHeader('Authorization', "Bearer ${token}")
+            .execute()
+            .get()
+
+        then:
+        authMock.verify(postRequestedFor(urlEqualTo('/oauth/check_token')))
+
+        assert response.statusCode == requestStatus
+
+        where:
+        oauthStatus | requestStatus
+        400         | 401
+        401         | 401
+        499         | 401
+        500         | 500
+        520         | 520
+        666         | 500
+    }
 }
 
 class TestApplication extends Application<TestConfiguration> {
