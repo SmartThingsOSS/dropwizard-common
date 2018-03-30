@@ -12,6 +12,7 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.Realm;
 import org.asynchttpclient.Response;
 import smartthings.dw.logging.LoggingContext;
+import smartthings.dw.oauth.exceptions.*;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -55,20 +56,30 @@ public class SpringSecurityAuthenticator implements OAuthAuthenticator {
 				.get();
 
 			code = resp.getStatusCode();
-            if (code == 200) {
-                AuthResponse authResponse = MAPPER.readValue(resp.getResponseBodyAsStream(), AuthResponse.class);
-                return Optional.ofNullable(authResponse.toOAuthToken(token));
-            }
-        } catch (Exception e) {
-            throw new AuthenticationException("Exception when trying to validate authentication", e);
-        }
+			if (code == 200) {
+				AuthResponse authResponse = MAPPER.readValue(resp.getResponseBodyAsStream(), AuthResponse.class);
+				return Optional.ofNullable(authResponse.toOAuthToken(token));
+			}
+		} catch (Exception e) {
+			throw new AuthenticationException("Exception when trying to validate authentication", e);
+		}
 
-        if (code >= 400 && code < 500) {
-            return Optional.empty();
-        } else if (code == 520) {
-            throw new SlowResponseException();
-        }
+		if (code >= 400 && code < 500) {
+			return Optional.empty();
+		} else if (code >= 500) {
+			if (code == 520) {
+				throw new UnknownException();
+			} else if (code == 521) {
+				throw new CircuitBreakerOpenException();
+			} else if (code == 522) {
+				throw new ConnectionException();
+			} else if (code == 524) {
+				throw new TimeoutException();
+			} else if (code == 525) {
+				throw new SSLException();
+			}
+		}
 
-        throw new AuthenticationException(String.format("Invalid status code found %d", code));
+		throw new AuthenticationException(String.format("Invalid status code found %d", code));
 	}
 }

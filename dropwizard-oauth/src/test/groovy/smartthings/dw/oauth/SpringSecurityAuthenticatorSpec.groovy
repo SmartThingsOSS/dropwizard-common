@@ -7,7 +7,9 @@ import org.asynchttpclient.BoundRequestBuilder
 import org.asynchttpclient.ListenableFuture
 import org.asynchttpclient.Response
 import smartthings.dw.logging.LoggingContext
+import smartthings.dw.oauth.exceptions.*
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class SpringSecurityAuthenticatorSpec extends Specification {
 
@@ -68,24 +70,33 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 		thrown(AuthenticationException)
 	}
 
-    def '520 oauth response throws Auth slow response exception'() {
-        when:
-        springSecurityAuthenticator.authenticate(token)
+	@Unroll
+	def '#code oauth response throws #expected response exception'() {
+		when:
+		springSecurityAuthenticator.authenticate(token)
 
-        then:
-        1 * client.preparePost("${config.host}/oauth/check_token") >> requestBuilder
-        1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
-        1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
-        1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
-        1 * requestBuilder.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.loggingId) >> requestBuilder
-        1 * requestBuilder.addFormParam("token", token) >> requestBuilder
-        1 * requestBuilder.execute() >> future
-        1 * future.get() >> response
-        1 * response.getStatusCode() >> 520
-        0 * _
+		then:
+		1 * client.preparePost("${config.host}/oauth/check_token") >> requestBuilder
+		1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
+		1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
+		1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
+		1 * requestBuilder.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.loggingId) >> requestBuilder
+		1 * requestBuilder.addFormParam("token", token) >> requestBuilder
+		1 * requestBuilder.execute() >> future
+		1 * future.get() >> response
+		1 * response.getStatusCode() >> code
+		0 * _
 
-        thrown(SlowResponseException)
-    }
+		thrown(expected)
+
+		where:
+		code || expected
+		520  || UnknownException
+		521  || CircuitBreakerOpenException
+		522  || ConnectionException
+		524  || TimeoutException
+		525  || SSLException
+	}
 
 	def 'exceptional oauth response throws Auth exception'() {
 		when:
@@ -220,9 +231,9 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 		actual.get().clientId == 'abcd'
 	}
 
-    def 'response with additional fields is handled as expected'() {
-        given:
-        String json = """
+	def 'response with additional fields is handled as expected'() {
+		given:
+		String json = """
 		{
 		  "user_name": "charliek",
 		  "scope": ["app"],
@@ -237,32 +248,32 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 		}
 		"""
 
-        when:
-        Optional<OAuthToken> actual = springSecurityAuthenticator.authenticate(token)
+		when:
+		Optional<OAuthToken> actual = springSecurityAuthenticator.authenticate(token)
 
-        then:
-        1 * client.preparePost("${config.host}/oauth/check_token") >> requestBuilder
-        1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
-        1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
-        1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
-        1 * requestBuilder.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.loggingId) >> requestBuilder
-        1 * requestBuilder.addFormParam("token", token) >> requestBuilder
-        1 * requestBuilder.execute() >> future
-        1 * future.get() >> response
-        1 * response.getStatusCode() >> 200
-        1 * response.getResponseBodyAsStream() >> new ByteArrayInputStream(json.bytes)
-        0 * _
+		then:
+		1 * client.preparePost("${config.host}/oauth/check_token") >> requestBuilder
+		1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
+		1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
+		1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
+		1 * requestBuilder.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.loggingId) >> requestBuilder
+		1 * requestBuilder.addFormParam("token", token) >> requestBuilder
+		1 * requestBuilder.execute() >> future
+		1 * future.get() >> response
+		1 * response.getStatusCode() >> 200
+		1 * response.getResponseBodyAsStream() >> new ByteArrayInputStream(json.bytes)
+		0 * _
 
-        actual.isPresent()
-        actual.get().user.isPresent()
-        actual.get().user.get().userName == 'charliek'
-        actual.get().user.get().authorities == ["ROLE_SUPPORT", "ROLE_SUPERUSER", "ROLE_APPROVER"].toSet()
-        actual.get().user.get().uuid == '83540011-a053-499c-9f64-4de40df39013'
-        actual.get().user.get().email == 'charlie.knudsen@smartthings.com'
-        actual.get().user.get().fullName == 'charliek'
-        actual.get().scopes == ['app'].toSet()
-        actual.get().clientId == 'abcd'
-        actual.get().additionalInformation == ["principal": "device:1234", "exp": 3025890541]
-    }
+		actual.isPresent()
+		actual.get().user.isPresent()
+		actual.get().user.get().userName == 'charliek'
+		actual.get().user.get().authorities == ["ROLE_SUPPORT", "ROLE_SUPERUSER", "ROLE_APPROVER"].toSet()
+		actual.get().user.get().uuid == '83540011-a053-499c-9f64-4de40df39013'
+		actual.get().user.get().email == 'charlie.knudsen@smartthings.com'
+		actual.get().user.get().fullName == 'charliek'
+		actual.get().scopes == ['app'].toSet()
+		actual.get().clientId == 'abcd'
+		actual.get().additionalInformation == ["principal": "device:1234", "exp": 3025890541]
+	}
 
 }
