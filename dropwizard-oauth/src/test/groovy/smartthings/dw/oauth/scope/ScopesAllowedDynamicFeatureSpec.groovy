@@ -8,8 +8,8 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory
 import org.junit.Rule
 import smartthings.dw.oauth.OAuthToken
-import smartthings.dw.oauth.User
 import smartthings.dw.oauth.TokenAuthorizer
+import smartthings.dw.oauth.User
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -17,7 +17,6 @@ import javax.ws.rs.container.ResourceInfo
 import javax.ws.rs.core.FeatureContext
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
-import java.lang.reflect.Method
 
 class ScopesAllowedDynamicFeatureSpec extends Specification {
 
