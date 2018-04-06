@@ -36,7 +36,8 @@ public class ExtendedAuthDynamicFeature implements DynamicFeature {
 	}
 
 	private static List<Class<? extends Annotation>> AUTH_ANNOTATIONS = ImmutableList.of(
-			RolesAllowed.class, DenyAll.class, PermitAll.class, ScopesAllowed.class);
+			RolesAllowed.class, DenyAll.class, PermitAll.class, ScopesAllowed.class,
+        FineGrainedScopeAllowed.class, FineGrainedScopesAllowed.class);
 
 	private boolean hasMethodAnnotation(ResourceInfo resourceInfo) {
 		AnnotatedMethod am = new AnnotatedMethod(resourceInfo.getResourceMethod());
