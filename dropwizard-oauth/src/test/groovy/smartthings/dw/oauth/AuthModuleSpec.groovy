@@ -104,6 +104,10 @@ class AuthModuleSpec extends Specification {
         499         | 401
         500         | 500
         520         | 520
+        521         | 521
+        522         | 522
+        524         | 524
+        525         | 525
         666         | 500
     }
 }
