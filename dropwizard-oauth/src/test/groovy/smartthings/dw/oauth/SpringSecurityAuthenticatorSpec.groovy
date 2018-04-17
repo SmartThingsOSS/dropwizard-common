@@ -6,8 +6,10 @@ import org.asynchttpclient.AsyncHttpClient
 import org.asynchttpclient.BoundRequestBuilder
 import org.asynchttpclient.ListenableFuture
 import org.asynchttpclient.Response
+import smartthings.dw.exceptions.TransparentResponseStatusException
 import smartthings.dw.logging.LoggingContext
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class SpringSecurityAuthenticatorSpec extends Specification {
 
@@ -27,6 +29,7 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 		config.user = 'me'
 		config.password = 'BahBahBlackSheep'
 		config.requestTimeout = Duration.seconds(1)
+        config.transparentServerStatusCodes = [520, 521]
 		springSecurityAuthenticator = new SpringSecurityAuthenticator(config, client)
 	}
 
@@ -68,7 +71,8 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 		thrown(AuthenticationException)
 	}
 
-    def '520 oauth response throws Auth slow response exception'() {
+    @Unroll
+    def '#transparentStatus oauth response throws TransparentResponseStatusException'() {
         when:
         springSecurityAuthenticator.authenticate(token)
 
@@ -81,10 +85,14 @@ class SpringSecurityAuthenticatorSpec extends Specification {
         1 * requestBuilder.addFormParam("token", token) >> requestBuilder
         1 * requestBuilder.execute() >> future
         1 * future.get() >> response
-        1 * response.getStatusCode() >> 520
+        1 * response.getStatusCode() >> transparentStatus
         0 * _
 
-        thrown(SlowResponseException)
+        TransparentResponseStatusException e = thrown()
+        e.status == transparentStatus
+
+        where:
+        transparentStatus << [520, 521]
     }
 
 	def 'exceptional oauth response throws Auth exception'() {

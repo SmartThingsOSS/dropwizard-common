@@ -11,6 +11,7 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.Realm;
 import org.asynchttpclient.Response;
+import smartthings.dw.exceptions.TransparentResponseStatusException;
 import smartthings.dw.logging.LoggingContext;
 
 import javax.inject.Inject;
@@ -65,8 +66,8 @@ public class SpringSecurityAuthenticator implements OAuthAuthenticator {
 
         if (code >= 400 && code < 500) {
             return Optional.empty();
-        } else if (code == 520) {
-            throw new SlowResponseException();
+        } else if (config.getTransparentServerStatusCodes().contains(code)) {
+            throw new TransparentResponseStatusException(code);
         }
 
         throw new AuthenticationException(String.format("Invalid status code found %d", code));

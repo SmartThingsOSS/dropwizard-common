@@ -1,4 +1,5 @@
 dependencies {
+    compile project(':dropwizard-common-classes')
     compile project(':dropwizard-guice')
     compile project(':dropwizard-logging')
     compile "io.dropwizard:dropwizard-auth:${dropwizardVersion}"
