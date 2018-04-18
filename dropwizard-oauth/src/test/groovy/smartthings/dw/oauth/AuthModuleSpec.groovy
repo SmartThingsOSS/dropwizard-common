@@ -23,7 +23,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*
 
 class AuthModuleSpec extends Specification {
 
+    @Shared
     static final int WIRE_MOCK_PORT = 11224
+    static final Set<Integer> transparentServerStatusCodes = [520, 521] as Set
 
     @ClassRule
     @Shared
@@ -35,7 +37,8 @@ class AuthModuleSpec extends Specification {
         auth: new AuthConfiguration(
             host: "http://localhost:${WIRE_MOCK_PORT}",
             user: 'user',
-            password: 'password'
+            password: 'password',
+            transparentServerStatusCodes: transparentServerStatusCodes
         )
     ))
 
@@ -77,7 +80,7 @@ class AuthModuleSpec extends Specification {
     }
 
     @Unroll
-    void 'when the oauth reponse is #oauthStatus the request response is #requestStatus'() {
+    void 'when the oauth response is #oauthStatus the request response is #requestStatus'() {
         given:
         String token = UUID.randomUUID().toString()
         authMock
@@ -103,7 +106,12 @@ class AuthModuleSpec extends Specification {
         401         | 401
         499         | 401
         500         | 500
+        501         | 500
+        501         | 500
+        519         | 500
         520         | 520
+        521         | 521
+        522         | 500
         666         | 500
     }
 }
