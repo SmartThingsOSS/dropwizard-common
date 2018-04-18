@@ -1,9 +1,12 @@
 package smartthings.dw.oauth;
 
+import com.google.common.collect.ImmutableSet;
 import io.dropwizard.util.Duration;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AuthConfiguration {
 
@@ -24,6 +27,9 @@ public class AuthConfiguration {
 
 	@NotNull
 	private Boolean enabled = true;
+
+	@NotNull
+	private Set<Integer> transparentServerStatusCodes = new HashSet<>();
 
 	public String getHost() {
 		return host;
@@ -72,4 +78,12 @@ public class AuthConfiguration {
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
+
+	public void setTransparentServerStatusCodes(Set<Integer> transparentServerStatusCodes) {
+	    this.transparentServerStatusCodes = ImmutableSet.copyOf(transparentServerStatusCodes);
+    }
+
+	public Set<Integer> getTransparentServerStatusCodes() {
+	    return transparentServerStatusCodes;
+    }
 }
