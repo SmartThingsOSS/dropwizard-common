@@ -1,15 +1,16 @@
 package smartthings.dw.cassandra;
 
+import brave.Tracing;
+import brave.cassandra.driver.CassandraClientTracing;
+import brave.cassandra.driver.TracingSession;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.TracedMappingManager;
-import com.github.kristofa.brave.Brave;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
-import smartthings.brave.cassandra.TracedSession;
+import smartthings.brave.cassandra.driver.NamedCassandraClientParser;
 import smartthings.dw.guice.AbstractDwModule;
-import smartthings.dw.zipkin.ZipkinConfiguration;
 
 /**
  * ZipkinCassandraModule does not extend smartthings.dw.cassandra.CassandraModule because
@@ -26,19 +27,27 @@ public class ZipkinCassandraModule extends AbstractDwModule {
     @Override
     protected void configure() {
         bind(CassandraHealthCheck.class).in(Scopes.SINGLETON);
-
         registerHealthCheck(CassandraHealthCheck.class);
     }
 
     @Provides
     @Singleton
-    Session provideTracedSession(ZipkinConfiguration zipkinConfiguration, Brave brave) {
-        return TracedSession.create(baseSession, brave, zipkinConfiguration.getServiceName());
+    Session provideTracedSession(CassandraClientTracing cassandraClientTracing) {
+        return TracingSession.create(cassandraClientTracing, baseSession);
     }
 
     @Provides
     @Singleton
     MappingManager provideMappingManager(Session session) {
         return new TracedMappingManager(session);
+    }
+
+    @Provides
+    @Singleton
+    CassandraClientTracing provideCassandraClientTracing(Tracing tracing) {
+        return CassandraClientTracing
+            .newBuilder(tracing)
+            .parser(new NamedCassandraClientParser())
+            .build();
     }
 }
