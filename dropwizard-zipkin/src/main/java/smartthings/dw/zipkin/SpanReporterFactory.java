@@ -2,8 +2,8 @@ package smartthings.dw.zipkin;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.jackson.Discoverable;
-import zipkin.Span;
-import zipkin.reporter.Reporter;
+import zipkin2.Span;
+import zipkin2.reporter.Reporter;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public interface SpanReporterFactory extends Discoverable {

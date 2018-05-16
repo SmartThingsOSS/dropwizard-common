@@ -1,10 +1,12 @@
 package smartthings.dw.cassandra
 
+import brave.Tracing
+import brave.cassandra.driver.CassandraClientTracing
+import brave.cassandra.driver.TracingSession
 import com.codahale.metrics.health.HealthCheck
 import com.datastax.driver.core.Session
 import com.datastax.driver.mapping.MappingManager
 import com.datastax.driver.mapping.TracedMappingManager
-import com.github.kristofa.brave.Brave
 import com.google.inject.Guice
 import com.google.inject.Injector
 import com.google.inject.TypeLiteral
@@ -16,21 +18,22 @@ import org.mockito.MockitoAnnotations
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
-import smartthings.brave.cassandra.TracedSession
 import smartthings.dw.guice.AbstractDwModule
 import smartthings.dw.zipkin.ZipkinConfiguration
 
+import static org.mockito.Mockito.eq
+import static org.mockito.Mockito.anyObject
 import static org.mockito.Mockito.when
 
 @RunWith(PowerMockRunner)
-@PrepareForTest([ZipkinCassandraModule, TracedSession, TracedMappingManager])
+@PrepareForTest([ZipkinCassandraModule, TracingSession, TracedMappingManager])
 class ZipkinCassandraModuleSpec {
 
     String svcName  ="ZipkinCassandraModuleSpec"
     @Mock
     ZipkinConfiguration zipkinConfig
     @Mock
-    Brave brave
+    Tracing tracing
     @Mock
     CassandraConfiguration config
     @Mock
@@ -41,15 +44,15 @@ class ZipkinCassandraModuleSpec {
     TracedMappingManager tracedMappingManager
 
     private static class DepModule extends AbstractDwModule {
-        private final Brave brave
+        private final Tracing tracing
         private final ZipkinConfiguration config
-        DepModule(ZipkinConfiguration config, Brave brave) {
-            this.brave = brave
+        DepModule(ZipkinConfiguration config, Tracing tracing) {
+            this.tracing = tracing
             this.config = config
         }
         @Override
         protected void configure() {
-            bind(Brave).toInstance(brave)
+            bind(Tracing).toInstance(tracing)
             bind(ZipkinConfiguration).toInstance(config)
         }
     }
@@ -57,9 +60,9 @@ class ZipkinCassandraModuleSpec {
     @Before
     void setup() {
         MockitoAnnotations.initMocks(this)
-        PowerMockito.mockStatic(TracedSession)
+        PowerMockito.mockStatic(TracingSession)
         PowerMockito.whenNew(TracedMappingManager).withAnyArguments().thenReturn(tracedMappingManager)
-        when(TracedSession.create(session, brave, svcName)).thenReturn(tracedSession)
+        when(TracingSession.create((CassandraClientTracing)anyObject(), eq(session))).thenReturn(tracedSession)
         when(config.buildSession()).thenReturn(session)
         when(zipkinConfig.getServiceName()).thenReturn(svcName)
     }
@@ -67,9 +70,13 @@ class ZipkinCassandraModuleSpec {
     @Test
     void 'register Cassandra health check, provide TracedSession and TracedMappingManager'() {
         Injector injector = Guice.createInjector(
-            new DepModule(zipkinConfig, brave),
+            new DepModule(zipkinConfig, tracing),
             new ZipkinCassandraModule(config)
         )
+
+        def cassandraTracing = injector.getInstance(CassandraClientTracing)
+
+        assert cassandraTracing.tracing() == tracing
 
         def checksBindings = injector.findBindingsByType(new TypeLiteral<Set<HealthCheck>>() {})
 

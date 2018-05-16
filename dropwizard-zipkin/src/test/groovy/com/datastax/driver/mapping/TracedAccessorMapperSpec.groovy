@@ -4,7 +4,7 @@ import com.datastax.driver.core.PreparedStatement
 import com.datastax.driver.core.Session
 import com.datastax.driver.mapping.MethodMapper.ParamMapper
 import com.google.common.util.concurrent.SettableFuture
-import smartthings.brave.cassandra.NamedPreparedStatement
+import smartthings.brave.cassandra.driver.NamedPreparedStatement
 import smartthings.dw.cassandra.StuffAccessor
 import spock.lang.Specification
 

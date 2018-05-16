@@ -1,8 +1,8 @@
 package smartthings.dw.zipkin;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import zipkin.Span;
-import zipkin.reporter.Reporter;
+import zipkin2.Span;
+import zipkin2.reporter.Reporter;
 
 @JsonTypeName("console")
 public class ConsoleSpanReporterFactory implements SpanReporterFactory {
