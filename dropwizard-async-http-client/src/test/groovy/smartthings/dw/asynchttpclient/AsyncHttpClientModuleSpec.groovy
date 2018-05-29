@@ -34,7 +34,7 @@ class AsyncHttpClientModuleSpec extends spock.lang.Specification {
 		client.config.requestFilters.size() == 1
 		client.config.requestFilters[0] instanceof CorrelationIdFilter
 		client.config.connectTimeout == 5000
-		client.config.acceptAnyCertificate == false
+		client.config.useInsecureTrustManager == false
 
 		and: 'default overrides are used'
 		client.config.requestTimeout == 5000
@@ -45,7 +45,7 @@ class AsyncHttpClientModuleSpec extends spock.lang.Specification {
 		given:
 		def overrides = [
 			connectTimeout: 100,
-			acceptAnyCertificate: true,
+			useInsecureTrustManager: true,
 			readTimeout: 1000
 		]
 		Injector injector = Guice.createInjector(new AsyncHttpClientModule(new AsyncHttpClientConfig(properties: overrides)))

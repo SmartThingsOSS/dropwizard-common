@@ -3,7 +3,6 @@ package smartthings.dw.asynchttpclient
 import io.netty.handler.codec.http.HttpHeaders
 import org.asynchttpclient.AsyncHandler
 import org.asynchttpclient.HttpResponseBodyPart
-import org.asynchttpclient.HttpResponseHeaders
 import org.asynchttpclient.HttpResponseStatus
 import org.asynchttpclient.Request
 import org.asynchttpclient.filter.FilterContext
@@ -52,9 +51,9 @@ class CorrelationIdFilterSpec extends Specification {
 			}
 
 			@Override
-			AsyncHandler.State onHeadersReceived(HttpResponseHeaders headers) throws Exception {
+			AsyncHandler.State onHeadersReceived(HttpHeaders headers) throws Exception {
 				callResults.onHeaders = MDC.get(FOO)
-				return AsyncHandler.State.UPGRADE
+				return AsyncHandler.State.CONTINUE
 			}
 
 			@Override
@@ -129,7 +128,7 @@ class CorrelationIdFilterSpec extends Specification {
 		callResults.onHeaders == 'bar'
 		fooBefore == null
 		fooAfter == null
-		result == AsyncHandler.State.UPGRADE
+		result == AsyncHandler.State.CONTINUE
 
 		when:
 		Thread.start {
