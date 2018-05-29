@@ -1,7 +1,9 @@
 package smartthings.dw.asynchttpclient;
 
 import io.netty.handler.codec.http.HttpHeaders;
-import org.asynchttpclient.*;
+import org.asynchttpclient.AsyncHandler;
+import org.asynchttpclient.HttpResponseBodyPart;
+import org.asynchttpclient.HttpResponseStatus;
 import org.asynchttpclient.filter.FilterContext;
 import org.asynchttpclient.filter.FilterException;
 import org.asynchttpclient.filter.RequestFilter;
@@ -55,7 +57,7 @@ public class CorrelationIdFilter implements RequestFilter {
 					}
 
 					@Override
-					public State onHeadersReceived(HttpResponseHeaders headers) throws Exception {
+					public State onHeadersReceived(HttpHeaders headers) throws Exception {
 						try {
 							mdc.forEach(MDC::put);
 							return asyncHandler.onHeadersReceived(headers);
