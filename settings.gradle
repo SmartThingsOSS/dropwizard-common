@@ -12,6 +12,4 @@ include 'dropwizard-success-meter'
 include 'dropwizard-common-classes'
 
 rootProject.name = 'dropwizard-common'
-//see: https://github.com/SmartThingsOSS/dropwizard-common#running-12x
-//include 'dropwizard-zipkin'
-
+include 'dropwizard-zipkin'
