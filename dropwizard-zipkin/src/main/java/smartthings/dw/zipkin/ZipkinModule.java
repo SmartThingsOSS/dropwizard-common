@@ -1,21 +1,22 @@
 package smartthings.dw.zipkin;
 
-import com.github.kristofa.brave.BoundarySampler;
-import com.github.kristofa.brave.Brave;
+import brave.CurrentSpanCustomizer;
+import brave.Tracing;
+import brave.http.HttpRuleSampler;
+import brave.http.HttpTracing;
+import brave.sampler.BoundarySampler;
 import com.google.common.net.InetAddresses;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
-import com.twitter.zipkin.gen.Endpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import smartthings.dw.guice.AbstractDwModule;
-import zipkin.Span;
-import zipkin.reporter.Reporter;
+import zipkin2.Endpoint;
+import zipkin2.Span;
+import zipkin2.reporter.Reporter;
 
-import java.math.BigInteger;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
+import java.net.*;
 import java.util.Enumeration;
 import java.util.Optional;
 
@@ -24,30 +25,59 @@ public class ZipkinModule extends AbstractDwModule {
     private final static Logger LOG = LoggerFactory.getLogger(ZipkinModule.class);
 
     private final ZipkinConfiguration config;
+    private final HttpRuleSampler serverSampler;
+    private final HttpRuleSampler clientSampler;
 
     public ZipkinModule(ZipkinConfiguration config) {
+        this(config, null, null);
+    }
+
+    public ZipkinModule(ZipkinConfiguration config, HttpRuleSampler serverSampler, HttpRuleSampler clientSampler) {
         this.config = config;
+        this.serverSampler = serverSampler;
+        this.clientSampler = clientSampler;
     }
 
     @Override
     protected void configure() {
         Endpoint endpoint = getHostEndpoint();
         Reporter<Span> reporter = config.getReporter().build();
-        Brave brave = new Brave.Builder(
-            endpoint.ipv4,
-            config.getServicePort(),
-            config.getServiceName()
-        )
-            .reporter(reporter)
-            .traceSampler(BoundarySampler.create(config.getSampleRate()))
+
+        Tracing tracing = Tracing.newBuilder()
+            .endpoint(endpoint)
+            .localServiceName(config.getServiceName())
+            .spanReporter(reporter)
+            .sampler(BoundarySampler.create(config.getSampleRate()))
             .traceId128Bit(config.isTraceId128Bit())
             .build();
 
         bind(new TypeLiteral<Reporter<Span>>() {
-        })
-            .toInstance(reporter);
-        bind(Brave.class).toInstance(brave);
+        }).toInstance(reporter);
+
+        bind(Tracing.class).toInstance(tracing);
         bind(Endpoint.class).toInstance(endpoint);
+    }
+
+    @Provides
+    @Singleton
+    HttpTracing providesHttpTracing(Tracing tracing) {
+         HttpTracing.Builder builder = HttpTracing.newBuilder(tracing);
+
+         if (clientSampler != null) {
+             builder.clientSampler(clientSampler);
+         }
+
+         if (serverSampler != null) {
+             builder.serverSampler(serverSampler);
+         }
+
+         return builder.build();
+    }
+
+    @Provides
+    @Singleton
+    CurrentSpanCustomizer providesCurrentSpanCustomizer(Tracing tracing) {
+        return CurrentSpanCustomizer.create(tracing);
     }
 
     private static int toInt(final String ip) {
@@ -55,21 +85,22 @@ public class ZipkinModule extends AbstractDwModule {
     }
 
     Endpoint getHostEndpoint() {
-        int ipv4 = 127 << 24 | 1;
+        InetAddress ipv4 = null;
+
         try {
+            ipv4 = InetAddress.getByName("127.0.0.1");
+
             if (config.getServiceHost() != null) {
-                ipv4 = toInt(config.getServiceHost());
+                ipv4 = InetAddress.getByName(config.getServiceHost());
             } else {
-                ipv4 = hostAddress()
-                    .map(addr -> (new BigInteger(addr.getAddress())).intValue())
-                    .orElse(ipv4);
+                ipv4 = hostAddress().orElse(ipv4);
             }
-        } catch (SocketException e) {
+        } catch (Exception e) {
             LOG.error("Failed to get host IPv4 address", e);
         }
-        return Endpoint.builder()
+        return Endpoint.newBuilder()
             .serviceName(config.getServiceName())
-            .ipv4(ipv4)
+            .ip(ipv4)
             .port(config.getServicePort())
             .build();
     }
