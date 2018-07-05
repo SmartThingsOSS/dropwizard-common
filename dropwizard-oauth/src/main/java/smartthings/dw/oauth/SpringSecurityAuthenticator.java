@@ -19,46 +19,47 @@ import java.util.Optional;
 
 @Singleton
 public class SpringSecurityAuthenticator implements OAuthAuthenticator {
-	private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
-	private static final Escaper URL_ESCAPER = UrlEscapers.urlFormParameterEscaper();
+    private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
+    private static final Escaper URL_ESCAPER = UrlEscapers.urlFormParameterEscaper();
 
-	private final AuthConfiguration config;
-	private final Realm realm;
-	private final AsyncHttpClient client;
-	private final int timeout;
+    private final AuthConfiguration config;
+    private final Realm realm;
+    private final AsyncHttpClient client;
+    private final int timeout;
 
-	public SpringSecurityAuthenticator(AuthConfiguration config) {
-		this(config, new DefaultAsyncHttpClient());
-	}
+    public SpringSecurityAuthenticator(AuthConfiguration config) {
+        this(config, new DefaultAsyncHttpClient());
+    }
 
-	@Inject
-	public SpringSecurityAuthenticator(AuthConfiguration config, AsyncHttpClient client) {
-		this.config = config;
-		this.client = client;
-		timeout = Ints.checkedCast(config.getRequestTimeout().toMilliseconds());
-		realm = new Realm.Builder(config.getUser(), config.getPassword())
-			.setUsePreemptiveAuth(true)
-			.setScheme(Realm.AuthScheme.BASIC)
-			.build();
-	}
+    @Inject
+    public SpringSecurityAuthenticator(AuthConfiguration config, AsyncHttpClient client) {
+        this.config = config;
+        this.client = client;
+        timeout = Ints.checkedCast(config.getRequestTimeout().toMilliseconds());
+        realm = new Realm.Builder(config.getUser(), config.getPassword())
+            .setUsePreemptiveAuth(true)
+            .setScheme(Realm.AuthScheme.BASIC)
+            .build();
+    }
 
-	@Override
-	public Optional<OAuthToken> authenticate(String token) throws AuthenticationException {
-		int code;
-		try {
-			Response resp = client.preparePost(config.getHost() + "/oauth/check_token")
-				.setRequestTimeout(timeout)
-				.setRealm(realm)
-				.addHeader("Accept", "application/json")
-				.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.getLoggingId())
-				.addFormParam("token", URL_ESCAPER.escape(token))
-				.execute()
-				.get();
+    @Override
+    public Optional<OAuthToken> authenticate(String token) throws AuthenticationException {
+        String cleanToken = removeTrailingAuthorizationHeaders(token);
+        int code;
+        try {
+            Response resp = client.preparePost(config.getHost() + "/oauth/check_token")
+                .setRequestTimeout(timeout)
+                .setRealm(realm)
+                .addHeader("Accept", "application/json")
+                .addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.getLoggingId())
+                .addFormParam("token", URL_ESCAPER.escape(cleanToken))
+                .execute()
+                .get();
 
-			code = resp.getStatusCode();
+            code = resp.getStatusCode();
             if (code == 200) {
                 AuthResponse authResponse = MAPPER.readValue(resp.getResponseBodyAsStream(), AuthResponse.class);
-                return Optional.ofNullable(authResponse.toOAuthToken(token));
+                return Optional.ofNullable(authResponse.toOAuthToken(cleanToken));
             }
         } catch (Exception e) {
             throw new AuthenticationException("Exception when trying to validate authentication", e);
@@ -71,5 +72,13 @@ public class SpringSecurityAuthenticator implements OAuthAuthenticator {
         }
 
         throw new AuthenticationException(String.format("Invalid status code found %d", code));
-	}
+    }
+
+    protected String removeTrailingAuthorizationHeaders(String token) {
+        try {
+            return token.split(",")[0];
+        } catch (Exception e) {
+            return token;
+        }
+    }
 }
