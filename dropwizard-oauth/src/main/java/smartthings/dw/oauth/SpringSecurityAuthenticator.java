@@ -44,6 +44,7 @@ public class SpringSecurityAuthenticator implements OAuthAuthenticator {
 
 	@Override
 	public Optional<OAuthToken> authenticate(String token) throws AuthenticationException {
+        String cleanToken = removeTrailingAuthorizationHeaders(token);
 		int code;
 		try {
 			Response resp = client.preparePost(config.getHost() + "/oauth/check_token")
@@ -51,14 +52,14 @@ public class SpringSecurityAuthenticator implements OAuthAuthenticator {
 				.setRealm(realm)
 				.addHeader("Accept", "application/json")
 				.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.getLoggingId())
-				.addFormParam("token", URL_ESCAPER.escape(token))
+				.addFormParam("token", URL_ESCAPER.escape(cleanToken))
 				.execute()
 				.get();
 
 			code = resp.getStatusCode();
             if (code == 200) {
                 AuthResponse authResponse = MAPPER.readValue(resp.getResponseBodyAsStream(), AuthResponse.class);
-                return Optional.ofNullable(authResponse.toOAuthToken(token));
+                return Optional.ofNullable(authResponse.toOAuthToken(cleanToken));
             }
         } catch (Exception e) {
             throw new AuthenticationException("Exception when trying to validate authentication", e);
@@ -71,5 +72,14 @@ public class SpringSecurityAuthenticator implements OAuthAuthenticator {
         }
 
         throw new AuthenticationException(String.format("Invalid status code found %d", code));
+	}
+
+    protected String removeTrailingAuthorizationHeaders(String token) {
+	    try {
+	        return token.split(",")[0];
+	    } catch (Exception e) {
+	        //Use provided value
+            return token;
+	    }
 	}
 }

@@ -8,6 +8,7 @@ import org.asynchttpclient.ListenableFuture
 import org.asynchttpclient.Response
 import smartthings.dw.exceptions.TransparentResponseStatusException
 import smartthings.dw.logging.LoggingContext
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -17,6 +18,7 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 	AuthConfiguration config
 	AsyncHttpClient client
 
+    @Shared
 	String token = 'abcd'
 	BoundRequestBuilder requestBuilder = Mock()
 	Response response = Mock()
@@ -271,6 +273,28 @@ class SpringSecurityAuthenticatorSpec extends Specification {
         actual.get().scopes == ['app'].toSet()
         actual.get().clientId == 'abcd'
         actual.get().additionalInformation == ["principal": "device:1234", "exp": 3025890541]
+    }
+
+    def 'token with trailing authorization headers are cleaned correctly'() {
+        when:
+        def cleanToken = springSecurityAuthenticator.removeTrailingAuthorizationHeaders(tokenValue)
+
+        then:
+        cleanToken == result
+        noExceptionThrown()
+
+        where:
+
+        tokenValue      | result
+        token + ", Signature keyId=\"/SmartThings/33:0a:6e:17:da:b2:2c:ee:63:6c:ee:9e:62:9b:07" +
+            ":ae\",signature=\"A6t7sNXwKpHcOGVm4NT9DeNpwae1w331PvGuECY3o6ZXqZ4n4Ob7PYFvzyJwTM8NRcSe4X4mRk4bspsh9kIPyu" +
+            "//cQxAFPOlkqJYQJNoYYvhOEgSeazJmQsEeE2Iu08ukwdhXyyaPpvrbfs8CMCY/Tw0MCY5Bw1qd" +
+            "+JWesdAus6kJcvatI6u3dK3bF2T2CHmD/KDLl77e9Rzwm4OEM7ejAzryWS0xSL+PP/osPCZv4ZVsC12e0HcEp6m/bFXWKD" +
+            "+itThhMyhs5DI/VhnPqQ2j5WA08mkRThA2iwLdnZGqJGgmpc4/0N8w4Bhp1Yvtex6dRfgYMA9pWkB9/W1ih6s0Q==\",headers=\"" +
+            "(request-target) digest date\",algorithm=\"rsa-sha256\"" | token
+        token | token
+        null  | null
+
     }
 
 }
