@@ -2,24 +2,25 @@ package smartthings.dw.rabbitmq
 
 import com.rabbitmq.client.Channel
 import com.rabbitmq.client.Connection
+import smartthings.dw.rabbitmq.connection.ManagedRabbitMQConnection
 import spock.lang.Specification
 
 import java.util.concurrent.TimeoutException
 
 
-class ManagedConnectionSpec extends Specification {
+class ManagedRabbitMQConnectionSpec extends Specification {
 
     RabbitMQConfiguration rabbitMQConfiguration
     StubbedConnectionFactory connectionFactory
     Connection connection
 
-    ManagedConnection managedConnection
+    ManagedRabbitMQConnection managedConnection
 
     def setup() {
         rabbitMQConfiguration = Mock(RabbitMQConfiguration)
         connection = Mock(Connection)
         connectionFactory = new StubbedConnectionFactory(connection)
-        managedConnection = new ManagedConnection(connectionFactory, rabbitMQConfiguration)
+        managedConnection = new ManagedRabbitMQConnection(connectionFactory, rabbitMQConfiguration)
     }
 
     def "Should be able to create a channel"() {
@@ -52,7 +53,7 @@ class ManagedConnectionSpec extends Specification {
         0 * _
 
         when:
-        managedConnection = new ManagedConnection(connectionFactory, rabbitMQConfiguration)
+        managedConnection = new ManagedRabbitMQConnection(connectionFactory, rabbitMQConfiguration)
 
         then:
         originalConnection != managedConnection.connection
