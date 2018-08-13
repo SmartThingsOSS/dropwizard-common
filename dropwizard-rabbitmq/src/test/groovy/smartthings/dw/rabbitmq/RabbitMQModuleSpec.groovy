@@ -11,6 +11,7 @@ import com.rabbitmq.client.Channel
 import com.rabbitmq.client.Connection
 import com.rabbitmq.client.ConnectionFactory
 import io.dropwizard.lifecycle.Managed
+import smartthings.dw.rabbitmq.connection.ManagedRabbitMQConnection
 import spock.lang.Specification
 
 class RabbitMQModuleSpec extends Specification {
@@ -76,13 +77,13 @@ class RabbitMQModuleSpec extends Specification {
         managedBindings.size() == 1
         Set managed  = managedBindings.first().provider.get()
         managed.size() == 1
-        managed.find { it instanceof ManagedConnection }
+        managed.find { it instanceof ManagedRabbitMQConnection }
     }
 
     def 'Provides a channel'() {
         given:
         RabbitMQModule rabbitMQModule = new RabbitMQModule()
-        ManagedConnection managedConnection = Mock(ManagedConnection)
+        ManagedRabbitMQConnection managedConnection = Mock(ManagedRabbitMQConnection)
 
         when:
         Channel providedChannel = rabbitMQModule.provideChannel(managedConnection)

@@ -27,7 +27,7 @@ public class RabbitMQConfiguration {
 
     private Long networkRecoveryInterval = null;
 
-    int getShutdownTimeout() {
+    public int getShutdownTimeout() {
         return shutdownTimeout;
     }
 
