@@ -35,6 +35,10 @@ subprojects {
 		jcenter()
 	}
 
+        test {
+                maxHeapSize = "1024m"
+        }
+
 	jacocoTestReport {
 		reports {
 			xml.enabled true
