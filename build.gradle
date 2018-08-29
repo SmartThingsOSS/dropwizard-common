@@ -3,7 +3,7 @@ buildscript {
 		jcenter()
 	}
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
     }
 }
@@ -24,6 +24,7 @@ subprojects {
 	apply plugin: "idea"
 	apply plugin: "groovy"
 	apply plugin: "jacoco"
+    apply plugin: 'com.github.ben-manes.versions'
 	apply from: rootProject.file('gradle/publishing.gradle')
 
 	sourceCompatibility = "1.8"
@@ -39,8 +40,4 @@ subprojects {
 			xml.enabled true
 		}
 	}
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.3.1'
 }
