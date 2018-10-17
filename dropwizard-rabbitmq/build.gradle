@@ -2,6 +2,7 @@ dependencies {
     compile project(':dropwizard-guice')
 
     compile 'com.rabbitmq:amqp-client:5.3.0'
+    compile group: 'org.apache.commons', name: 'commons-pool2', version: '2.6.0'
 
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
 

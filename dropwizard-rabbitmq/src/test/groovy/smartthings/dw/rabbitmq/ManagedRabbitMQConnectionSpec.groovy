@@ -101,4 +101,21 @@ class ManagedRabbitMQConnectionSpec extends Specification {
         1 * connection.abort(shutdownTimeout)
         0 * _
     }
+
+    def "Should borrow channel from pool"() {
+        given: "a mock channel"
+        Channel channel = Mock(Channel)
+
+        when: "getting a channel the first time"
+        Channel chan = managedConnection.getChannel()
+
+        then: "it should create a channel"
+        1 * connection.createChannel() >> channel
+
+        when: "returning the channel and borrowing again"
+        managedConnection.returnChannel(channel)
+
+        then: "it should not create another channel"
+        0 * connection.createChannel()
+    }
 }
