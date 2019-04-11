@@ -55,6 +55,8 @@ public class CassandraConfiguration {
 
     private Long shutdownTimeoutInMillis = TimeUnit.SECONDS.toMillis(30);
 
+    private String testQuery = "SELECT * FROM system.peer_events LIMIT 1";
+
 	public JKSConfig getTruststore() {
 		return truststore;
 	}
@@ -104,7 +106,7 @@ public class CassandraConfiguration {
 	}
 
 	public RegularStatement getValidationQuery() {
-	    SimpleStatement statement = new  SimpleStatement("SELECT * FROM system.schema_keyspaces");
+	    SimpleStatement statement = new  SimpleStatement(testQuery);
 	    statement.setIdempotent(true);
 	    return statement;
 	}
@@ -171,6 +173,14 @@ public class CassandraConfiguration {
 
     public void setShutdownTimeoutInMillis(Long shutdownTimeoutInMillis) {
         this.shutdownTimeoutInMillis = shutdownTimeoutInMillis;
+    }
+
+    public String getTestQuery() {
+        return testQuery;
+    }
+
+    public void setTestQuery(String testQuery) {
+        this.testQuery = testQuery;
     }
 
     public static class JKSConfig {
