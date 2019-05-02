@@ -12,3 +12,8 @@ Also the hope is to open source this repo at some once things are fleshed out
 further so don't include anything that you wouldn't consider open sourcing.
 
 See each modules documentation for usage details.
+
+1.0.x branches
+=========================
+
+Due to a dependency with Cassandra Core Driver and Guava 19.x there is a conflict between Dropwizard >1.0.x's Guava dependency and those needed by the dropwizard-cassandra module. For projects requiring Cassandra it is recommended you use the 1.0.x releases of Dropwizard and Dropwizard Common. When Datastax releases a final version of their 4.x driver which removes the Guava dependency entirely we will look at using that and merging this branch back into master.
