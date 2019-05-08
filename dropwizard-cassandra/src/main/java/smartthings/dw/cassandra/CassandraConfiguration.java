@@ -55,7 +55,7 @@ public class CassandraConfiguration {
 
     private Long shutdownTimeoutInMillis = TimeUnit.SECONDS.toMillis(30);
 
-    private String testQuery = "SELECT * FROM system.peer_events LIMIT 1";
+    private String testQuery = "SELECT cql_version FROM system.local LIMIT 1";
 
 	public JKSConfig getTruststore() {
 		return truststore;
