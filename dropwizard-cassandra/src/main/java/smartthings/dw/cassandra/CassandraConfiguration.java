@@ -39,6 +39,8 @@ public class CassandraConfiguration {
 
 	private QueryOptions queryOptions;
 
+	private int protocolVersion;
+
 	@Valid
 	private RetryPolicyFactory retryPolicy;
 
@@ -183,6 +185,14 @@ public class CassandraConfiguration {
         this.testQuery = testQuery;
     }
 
+    public int getProtocolVersion() {
+	    return this.protocolVersion;
+    }
+
+    public void setProtocolVersion(int protocolVersion) {
+        this.protocolVersion = protocolVersion;
+    }
+
     public static class JKSConfig {
 
 		String path;
@@ -266,6 +276,11 @@ public class CassandraConfiguration {
 			LOG.info("Credentials - {}", user);
 			builder.withCredentials(user, password);
 		}
+
+		if (protocolVersion != 0) {
+            builder.withProtocolVersion(ProtocolVersion.fromInt(protocolVersion));
+            LOG.info("Protocol Version - {}", protocolVersion);
+        }
 
 		cluster = builder.build();
 
