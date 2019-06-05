@@ -53,9 +53,11 @@ public class CassandraConfiguration {
 
 	private List<String> seeds;
 
+	private int protocolVersion = 0;
+
     private Long shutdownTimeoutInMillis = TimeUnit.SECONDS.toMillis(30);
 
-    private String testQuery = "SELECT cql_version FROM system.local LIMIT 1";
+    private String testQuery = "SELECT * FROM system.peer_events LIMIT 1";
 
 	public JKSConfig getTruststore() {
 		return truststore;
@@ -183,6 +185,14 @@ public class CassandraConfiguration {
         this.testQuery = testQuery;
     }
 
+    public int getProtocolVersion() {
+	    return this.protocolVersion;
+    }
+
+    public void setProtocolVersion(int protocolVersion) {
+	    this.protocolVersion = protocolVersion;
+    }
+
     public static class JKSConfig {
 
 		String path;
@@ -266,6 +276,11 @@ public class CassandraConfiguration {
 			LOG.info("Credentials - {}", user);
 			builder.withCredentials(user, password);
 		}
+
+		if (protocolVersion != 0) {
+		    builder.withProtocolVersion(ProtocolVersion.fromInt(protocolVersion));
+		    LOG.info("Protocol Version - {}", protocolVersion);
+        }
 
 		cluster = builder.build();
 
