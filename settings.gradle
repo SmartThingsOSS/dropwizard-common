@@ -1,7 +1,7 @@
 include 'dropwizard-guice'
 include 'dropwizard-buildinfo'
 //see: https://github.com/SmartThingsOSS/dropwizard-common#running-12x
-//include 'dropwizard-cassandra'
+include 'dropwizard-cassandra'
 include 'dropwizard-logging'
 include 'dropwizard-oauth'
 include 'dropwizard-datadog'
