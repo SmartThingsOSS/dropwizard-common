@@ -242,6 +242,23 @@ class ScopesAllowedDynamicFeatureSpec extends Specification {
         'staticScope'        | StaticScope        | true       | 1           | 1         | 0
     }
 
+    @Unroll
+    def 'fineGrainedScopePartsMatch should work correctly with *s'() {
+        when:
+        boolean isMatch = ScopesAllowedDynamicFeature.ScopesAllowedRequestFilter.fineGrainedScopePartsMatch([passedInScope], allowedScope)
+
+        then:
+        isMatch == true
+
+        where:
+        passedInScope               | allowedScope
+        'r:security:test'           | 'r:security:test'
+        'w:security:test:disarm'    | 'w:security:*:*'
+        'r:security:test'           | 'r:security:*'
+        'r:*:test'                  | 'r:security:test'
+        'r:security:*:*'            | 'r:security:test:disarm'
+    }
+
     private static class NoScope {
         @ScopesAllowed('static')
         @FineGrainedScopesAllowed([@FineGrainedScopeAllowed(scope='{fine}', varInfo=@VarInfo(name='fine', type=HttpRequestVarType.PATH))])

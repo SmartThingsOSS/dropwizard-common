@@ -181,7 +181,7 @@ public class ScopesAllowedDynamicFeature implements DynamicFeature {
 
 		        if (scopeParts.length == allowedScopedParts.length) {
                     for (int i = 0; i < allowedScopedParts.length; i++) {
-                        if (allowedScopedParts[i].equals("*") || allowedScopedParts[i].equals(scopeParts[i])) {
+                        if (scopeParts[i].equals("*") || allowedScopedParts[i].equals("*") || allowedScopedParts[i].equals(scopeParts[i])) {
                             matches = matches && true;
                         } else {
                             matches = false;
