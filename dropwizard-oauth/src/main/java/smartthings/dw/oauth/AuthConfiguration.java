@@ -31,6 +31,9 @@ public class AuthConfiguration {
 	@NotNull
 	private Set<Integer> transparentServerStatusCodes = new HashSet<>();
 
+	@NotNull
+	private Integer cacheSize = 100;
+
 	public String getHost() {
 		return host;
 	}
@@ -86,4 +89,8 @@ public class AuthConfiguration {
 	public Set<Integer> getTransparentServerStatusCodes() {
 	    return transparentServerStatusCodes;
     }
+
+    public Integer getCacheSize() {
+	    return cacheSize;
+	}
 }
