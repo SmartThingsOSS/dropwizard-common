@@ -34,7 +34,7 @@ public class AuthModule extends AbstractDwModule {
         Authenticator<String, OAuthToken> authenticator = auth;
         if (cacheMillis > 0) {
             CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
-                    .maximumSize(100)
+                    .maximumSize(config.getCacheSize())
                     .expireAfterWrite(cacheMillis, TimeUnit.MILLISECONDS);
             authenticator = new CachingAuthenticator<>(
                 registry,
