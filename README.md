@@ -13,6 +13,8 @@ further so don't include anything that you wouldn't consider open sourcing.
 
 See each modules documentation for usage details.
 
+## Note Cassandra and Zipkin dependencies have not yet been updated to DW 2.x.
+
 ## Branches
 
 | Git Branch | Description      |

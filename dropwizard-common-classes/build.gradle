@@ -1,3 +1,4 @@
 dependencies {
-    compile "io.dropwizard:dropwizard-core:${dropwizardVersion}"
+    api platform("io.dropwizard:dropwizard-bom:${dropwizardVersion}")
+    api "io.dropwizard:dropwizard-core"
 }

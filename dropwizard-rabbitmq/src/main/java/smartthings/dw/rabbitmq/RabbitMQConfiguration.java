@@ -1,7 +1,8 @@
 package smartthings.dw.rabbitmq;
 
 import com.rabbitmq.client.ConnectionFactory;
-import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotEmpty;
 
 public class RabbitMQConfiguration {
 
