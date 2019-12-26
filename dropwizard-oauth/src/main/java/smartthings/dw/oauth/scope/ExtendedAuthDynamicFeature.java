@@ -2,7 +2,6 @@ package smartthings.dw.oauth.scope;
 
 import io.dropwizard.auth.Auth;
 import io.dropwizard.auth.AuthDynamicFeature;
-import jersey.repackaged.com.google.common.collect.ImmutableList;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
@@ -14,6 +13,7 @@ import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,7 +35,7 @@ public class ExtendedAuthDynamicFeature implements DynamicFeature {
 		this.authFilter = authFilter;
 	}
 
-	private static List<Class<? extends Annotation>> AUTH_ANNOTATIONS = ImmutableList.of(
+	private static List<Class<? extends Annotation>> AUTH_ANNOTATIONS = Arrays.asList(
 			RolesAllowed.class, DenyAll.class, PermitAll.class, ScopesAllowed.class,
         FineGrainedScopeAllowed.class, FineGrainedScopesAllowed.class);
 
