@@ -11,6 +11,8 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.Realm;
 import org.asynchttpclient.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import smartthings.dw.exceptions.TransparentResponseStatusException;
 import smartthings.dw.logging.LoggingContext;
 
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class SpringSecurityAuthenticator implements OAuthAuthenticator {
 	private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
 	private static final Escaper URL_ESCAPER = UrlEscapers.urlFormParameterEscaper();
+	private static final Logger LOG = LoggerFactory.getLogger(SpringSecurityAuthenticator.class);
 
 	private final AuthConfiguration config;
 	private final Realm realm;
@@ -65,6 +68,9 @@ public class SpringSecurityAuthenticator implements OAuthAuthenticator {
         }
 
         if (code >= 400 && code < 500) {
+            return Optional.empty();
+        } else if (code >= 520 && code < 530) {
+            LOG.warn("Authentication timeout encountered");
             return Optional.empty();
         } else if (config.getTransparentServerStatusCodes().contains(code)) {
             throw new TransparentResponseStatusException(code);
