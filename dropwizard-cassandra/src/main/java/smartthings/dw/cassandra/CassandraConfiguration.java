@@ -38,6 +38,7 @@ public class CassandraConfiguration {
 	private Boolean autoMigrate = false;
 
 	private QueryOptions queryOptions;
+    private PoolConfiguration pooling;
 
 	@Valid
 	private RetryPolicyFactory retryPolicy;
@@ -193,6 +194,14 @@ public class CassandraConfiguration {
 	    this.protocolVersion = protocolVersion;
     }
 
+    public PoolConfiguration getPooling() {
+        return pooling;
+    }
+
+    public void setPooling(PoolConfiguration pooling) {
+        this.pooling = pooling;
+    }
+
     public static class JKSConfig {
 
 		String path;
@@ -243,6 +252,11 @@ public class CassandraConfiguration {
 			LOG.info("QueryOptions - DefaultIdempotence {}", queryOptions.getDefaultIdempotence());
 			builder.withQueryOptions(queryOptions);
 		}
+
+        if (pooling != null) {
+            LOG.info("PoolOptions - {}", pooling);
+            builder.withPoolingOptions(pooling.toPoolOptions());
+        }
 
 		if (retryPolicy != null) {
 			builder.withRetryPolicy(retryPolicy.build());
@@ -309,4 +323,106 @@ public class CassandraConfiguration {
 		ctx.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
 		return ctx;
 	}
+
+    public static class PoolConfiguration {
+        private Integer idleTimeoutSeconds;
+        private Integer heartbeatIntervalSeconds;
+        private Integer maxQueueSize;
+        private Integer poolTimeoutMillis;
+        private Integer localMaxConnPerHost;
+        private Integer remoteMaxConnPerHost;
+
+        public PoolConfiguration() {
+
+        }
+
+        public Integer getIdleTimeoutSeconds() {
+            return idleTimeoutSeconds;
+        }
+
+        public void setIdleTimeoutSeconds(Integer idleTimeoutSeconds) {
+            this.idleTimeoutSeconds = idleTimeoutSeconds;
+        }
+
+        public Integer getHeartbeatIntervalSeconds() {
+            return heartbeatIntervalSeconds;
+        }
+
+        public void setHeartbeatIntervalSeconds(Integer heartbeatIntervalSeconds) {
+            this.heartbeatIntervalSeconds = heartbeatIntervalSeconds;
+        }
+
+        public Integer getMaxQueueSize() {
+            return maxQueueSize;
+        }
+
+        public void setMaxQueueSize(Integer maxQueueSize) {
+            this.maxQueueSize = maxQueueSize;
+        }
+
+        public Integer getPoolTimeoutMillis() {
+            return poolTimeoutMillis;
+        }
+
+        public void setPoolTimeoutMillis(Integer poolTimeoutMillis) {
+            this.poolTimeoutMillis = poolTimeoutMillis;
+        }
+
+        public Integer getLocalMaxConnPerHost() {
+            return localMaxConnPerHost;
+        }
+
+        public void setLocalMaxConnPerHost(Integer localMaxConnPerHost) {
+            this.localMaxConnPerHost = localMaxConnPerHost;
+        }
+
+        public Integer getRemoteMaxConnPerHost() {
+            return remoteMaxConnPerHost;
+        }
+
+        public void setRemoteMaxConnPerHost(Integer remoteMaxConnPerHost) {
+            this.remoteMaxConnPerHost = remoteMaxConnPerHost;
+        }
+
+        @Override
+        public String toString() {
+            return "PoolConfiguration{" +
+                "idleTimeoutSeconds=" + idleTimeoutSeconds +
+                ", heartbeatIntervalSeconds=" + heartbeatIntervalSeconds +
+                ", maxQueueSize=" + maxQueueSize +
+                ", poolTimeoutMillis=" + poolTimeoutMillis +
+                ", localMaxConnPerHost=" + localMaxConnPerHost +
+                ", remoteMaxConnPerHost=" + remoteMaxConnPerHost +
+                '}';
+        }
+
+        public PoolingOptions toPoolOptions() {
+            PoolingOptions options = new PoolingOptions();
+
+            if (idleTimeoutSeconds != null) {
+                options.setIdleTimeoutSeconds(idleTimeoutSeconds);
+            }
+
+            if (heartbeatIntervalSeconds != null) {
+                options.setHeartbeatIntervalSeconds(heartbeatIntervalSeconds);
+            }
+
+            if (maxQueueSize != null) {
+                options.setMaxQueueSize(maxQueueSize);
+            }
+
+            if (poolTimeoutMillis != null) {
+                options.setPoolTimeoutMillis(poolTimeoutMillis);
+            }
+
+            if (localMaxConnPerHost != null) {
+                options.setMaxConnectionsPerHost(HostDistance.LOCAL, localMaxConnPerHost);
+            }
+
+            if (remoteMaxConnPerHost != null) {
+                options.setMaxConnectionsPerHost(HostDistance.REMOTE, remoteMaxConnPerHost);
+            }
+            return options;
+        }
+    }
 }
