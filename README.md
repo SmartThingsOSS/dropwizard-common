@@ -12,3 +12,14 @@ Also the hope is to open source this repo at some once things are fleshed out
 further so don't include anything that you wouldn't consider open sourcing.
 
 See each modules documentation for usage details.
+
+## Note Cassandra and Zipkin dependencies have not yet been updated to DW 2.x.
+
+## Branches
+
+| Git Branch | Description      |
+|------------|------------------|
+| master     | Dropwizard 2.x   |
+| 1.0.x      | Dropwizard 1.0.x |
+| 1.2.x      | Dropwizard 1.2.x |
+| 1.3.x      | Dropwizard 1.3.x |

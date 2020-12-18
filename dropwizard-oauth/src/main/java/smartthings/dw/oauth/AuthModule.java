@@ -1,7 +1,7 @@
 package smartthings.dw.oauth;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
@@ -33,10 +33,10 @@ public class AuthModule extends AbstractDwModule {
         long cacheMillis = config.getCacheTTL().toMilliseconds();
         Authenticator<String, OAuthToken> authenticator = auth;
         if (cacheMillis > 0) {
-            CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
-                    .maximumSize(config.getCacheSize())
-                    .expireAfterWrite(cacheMillis, TimeUnit.MILLISECONDS);
-            authenticator = new CachingAuthenticator<>(
+            Caffeine<Object, Object> cacheBuilder = Caffeine.newBuilder()
+                .maximumSize(config.getCacheSize())
+                .expireAfterWrite(cacheMillis, TimeUnit.MILLISECONDS);
+            authenticator = new CachingAuthenticator<String, OAuthToken>(
                 registry,
                 auth,
                 cacheBuilder

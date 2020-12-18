@@ -37,6 +37,7 @@ public class ProtocolBufferMessageBodyProviderTest {
                 .isTrue();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void deserializesRequestEntities() throws Exception {
         final ByteArrayInputStream entity = new ByteArrayInputStream(example.toByteArray());
@@ -56,6 +57,7 @@ public class ProtocolBufferMessageBodyProviderTest {
                 .isEqualTo(1337L);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void throwsAWebApplicationExceptionForMalformedRequestEntities() throws Exception {
         final ByteArrayInputStream entity = new ByteArrayInputStream("{\"id\":-1d".getBytes());

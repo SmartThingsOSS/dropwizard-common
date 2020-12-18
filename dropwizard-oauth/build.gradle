@@ -1,21 +1,22 @@
 dependencies {
-    compile project(':dropwizard-common-classes')
-    compile project(':dropwizard-guice')
-    compile project(':dropwizard-logging')
-    compile "io.dropwizard:dropwizard-auth:${dropwizardVersion}"
-    compile "org.asynchttpclient:async-http-client:${asynchttpclientVersion}"
+    api project(':dropwizard-common-classes')
+    api project(':dropwizard-guice')
+    api project(':dropwizard-logging')
+    api 'io.dropwizard:dropwizard-auth'
+    api "org.asynchttpclient:async-http-client:${asynchttpclientVersion}"
 
-    testCompile("org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:${jerseyVersion}") {
+    testImplementation("org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:${jerseyVersion}") {
         // See http://www.dropwizard.io/0.9.1/docs/manual/auth.html#testing-protected-resources
         exclude module: 'junit'
         exclude module: 'javax.servlet-api'
     }
-    testCompile "io.dropwizard:dropwizard-testing:${dropwizardVersion}"
-    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-    testCompile 'com.github.tomakehurst:wiremock-standalone:2.7.1'
-    testCompile project(':dropwizard-async-http-client')
 
-    testRuntime 'cglib:cglib-nodep:2.2.2'
-    testRuntime 'org.objenesis:objenesis:1.2'
-    testRuntime 'ch.qos.logback:logback-classic:1.1.2'
+    testImplementation 'io.dropwizard:dropwizard-testing'
+    testImplementation 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testImplementation 'com.github.tomakehurst:wiremock-standalone:2.25.1'
+    testImplementation project(':dropwizard-async-http-client')
+
+    testRuntime "cglib:cglib-nodep:${cglibVersion}"
+    testRuntime "org.objenesis:objenesis:${objenesisVersion}"
+    testRuntime 'ch.qos.logback:logback-classic'
 }
