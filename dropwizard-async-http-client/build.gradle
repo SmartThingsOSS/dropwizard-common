@@ -1,9 +1,9 @@
 dependencies {
-	compile project(':dropwizard-guice')
-	compile project(':dropwizard-logging')
-	compile "org.asynchttpclient:async-http-client:${asynchttpclientVersion}"
+    api project(':dropwizard-guice')
+    api project(':dropwizard-logging')
+    api "org.asynchttpclient:async-http-client:${asynchttpclientVersion}"
 
-	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-	testRuntime 'cglib:cglib-nodep:3.2.7'
-	testRuntime 'org.objenesis:objenesis:2.6'
+    testImplementation 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testRuntime "cglib:cglib-nodep:${cglibVersion}"
+    testRuntime "org.objenesis:objenesis:${objenesisVersion}"
 }

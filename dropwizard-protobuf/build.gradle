@@ -1,35 +1,35 @@
 buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.1'
-	}
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.11'
+    }
 }
 
 apply plugin: 'com.google.protobuf'
 dependencies {
-	compile 'com.google.protobuf:protobuf-java:3.3.1'
-	compile "io.dropwizard:dropwizard-jersey:${dropwizardVersion}"
+    api 'com.google.protobuf:protobuf-java:3.11.1'
+    api "io.dropwizard:dropwizard-jersey:${dropwizardVersion}"
 
-	testCompile "io.dropwizard:dropwizard-testing:${dropwizardVersion}"
-	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-	testRuntime 'cglib:cglib-nodep:2.2.2'
-	testRuntime 'org.objenesis:objenesis:1.2'
-	testRuntime 'ch.qos.logback:logback-classic:1.1.2'
+    testCompile "io.dropwizard:dropwizard-testing:${dropwizardVersion}"
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testRuntime "cglib:cglib-nodep:${cglibVersion}"
+    testRuntime "org.objenesis:objenesis:${objenesisVersion}"
+    testRuntime 'ch.qos.logback:logback-classic'
 }
 
 protobuf {
-	generatedFilesBaseDir = "$projectDir/src/test/generated"
-	protoc {
-		artifact = 'com.google.protobuf:protoc:3.3.0'
-	}
+    generatedFilesBaseDir = "$projectDir/src/test/generated"
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.11.2'
+    }
 }
 
 sourceSets {
-	test {
-		proto {
-			srcDir 'src/test/resources'
-		}
-	}
+    test {
+        proto {
+            srcDir 'src/test/resources'
+        }
+    }
 }

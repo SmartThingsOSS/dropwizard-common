@@ -1,7 +1,8 @@
 package smartthings.dw.rabbitmq;
 
 import com.rabbitmq.client.ConnectionFactory;
-import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotEmpty;
 
 public class RabbitMQConfiguration {
 
@@ -31,9 +32,10 @@ public class RabbitMQConfiguration {
         return shutdownTimeout;
     }
 
+    private boolean useNio = false;
+
     ConnectionFactory buildConnectionFactory() {
         ConnectionFactory factory = new ConnectionFactory();
-
 
         factory.setHost(host);
         factory.setVirtualHost(virtualHost);
@@ -48,6 +50,10 @@ public class RabbitMQConfiguration {
         factory.setAutomaticRecoveryEnabled(automaticRecoveryEnabled);
         if (networkRecoveryInterval != null) {
             factory.setNetworkRecoveryInterval(networkRecoveryInterval);
+        }
+
+        if(useNio) {
+            factory.useNio();
         }
 
         return factory;
@@ -87,5 +93,13 @@ public class RabbitMQConfiguration {
 
     public void setNetworkRecoveryInterval(Long networkRecoveryInterval) {
         this.networkRecoveryInterval = networkRecoveryInterval;
+    }
+
+    public boolean isUseNio() {
+        return useNio;
+    }
+
+    public void setUseNio(boolean useNio) {
+        this.useNio = useNio;
     }
 }
