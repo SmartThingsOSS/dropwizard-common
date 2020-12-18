@@ -1,5 +1,6 @@
 dependencies {
-    compile project(':dropwizard-guice')
+    api project(':dropwizard-guice')
+    api 'com.rabbitmq:amqp-client:5.10.0'
 
     compile 'com.rabbitmq:amqp-client:5.3.0'
 
