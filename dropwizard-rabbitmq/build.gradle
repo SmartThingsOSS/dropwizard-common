@@ -1,6 +1,6 @@
 dependencies {
     api project(':dropwizard-guice')
-    api 'com.rabbitmq:amqp-client:5.10.0'
+    api 'com.rabbitmq:amqp-client:5.8.0'
 
     testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
     testRuntime "cglib:cglib-nodep:${cglibVersion}"
