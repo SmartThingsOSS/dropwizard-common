@@ -1,8 +1,8 @@
 package smartthings.dw.rabbitmq;
 
 import com.rabbitmq.client.ConnectionFactory;
+import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotEmpty;
 
 import static com.rabbitmq.client.ConnectionFactory.DEFAULT_HEARTBEAT;
 
