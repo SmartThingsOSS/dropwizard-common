@@ -2,7 +2,6 @@ package io.dropwizard.jersey.protobuf;
 
 import com.google.protobuf.Message;
 
-import io.dropwizard.jersey.protobuf.ProtocolBufferMessageBodyProvider;
 import io.dropwizard.jersey.protobuf.protos.DropwizardProtosTest.Example;
 
 import java.io.ByteArrayInputStream;

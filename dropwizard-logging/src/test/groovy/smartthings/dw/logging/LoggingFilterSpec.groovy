@@ -1,6 +1,6 @@
 package smartthings.dw.logging
 
-import org.apache.log4j.MDC
+import org.slf4j.MDC
 import spock.lang.Specification
 
 import javax.servlet.FilterChain

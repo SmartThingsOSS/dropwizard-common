@@ -17,6 +17,7 @@ dependencies {
     testRuntime "cglib:cglib-nodep:${cglibVersion}"
     testRuntime "org.objenesis:objenesis:${objenesisVersion}"
     testRuntime 'ch.qos.logback:logback-classic'
+    testImplementation("org.assertj:assertj-core:3.18.1")
 }
 
 protobuf {
