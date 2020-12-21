@@ -3,6 +3,8 @@ package smartthings.dw.rabbitmq
 import com.rabbitmq.client.ConnectionFactory
 import spock.lang.Specification
 
+import static com.rabbitmq.client.ConnectionFactory.DEFAULT_HEARTBEAT
+
 class RabbitMQConfigurationSpec extends Specification {
     RabbitMQConfiguration rabbitMQConfiguration
 
@@ -36,6 +38,7 @@ class RabbitMQConfigurationSpec extends Specification {
         connectionFactory.connectionTimeout == 60000
         connectionFactory.networkRecoveryInterval == defaultConnectionFactory.networkRecoveryInterval
         connectionFactory.networkRecoveryInterval == 5000
+        connectionFactory.getRequestedHeartbeat() == DEFAULT_HEARTBEAT
 
         where:
         host        | username | password
@@ -52,6 +55,7 @@ class RabbitMQConfigurationSpec extends Specification {
         rabbitMQConfiguration.setAutomaticRecoveryEnabled(automaticRecoveryEnabled)
         rabbitMQConfiguration.setConnectionTimeout(connectionTimeout)
         rabbitMQConfiguration.setNetworkRecoveryInterval(networkRecoveryInterval)
+        rabbitMQConfiguration.setRequestedHeartBeatTimeoutInSecs(heartBeat)
 
         and:
         ConnectionFactory connectionFactory = rabbitMQConfiguration.buildConnectionFactory()
@@ -65,10 +69,11 @@ class RabbitMQConfigurationSpec extends Specification {
         connectionFactory.automaticRecoveryEnabled == automaticRecoveryEnabled
         connectionFactory.connectionTimeout == connectionTimeout
         connectionFactory.networkRecoveryInterval == networkRecoveryInterval
+        connectionFactory.requestedHeartbeat == heartBeat
 
         where:
-        host        | virtualHost | port | username | password        | automaticRecoveryEnabled | connectionTimeout | networkRecoveryInterval
-        "localhost" | "rabbit"    | 8080 | "test"   | "shitsitsecret" | false                    | 1000              | 2
+        host        | virtualHost | port | username | password        | automaticRecoveryEnabled | connectionTimeout | networkRecoveryInterval  | heartBeat
+        "localhost" | "rabbit"    | 8080 | "test"   | "shitsitsecret" | false                    | 1000              | 2                        |   10
     }
 
     def "Should be able to set the shutdown timeout for stopping the managed connection"() {
