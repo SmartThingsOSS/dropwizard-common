@@ -92,10 +92,20 @@ workflows:
 
   main:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              ignore: /.*/
       - test:
           requires:
             - build
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
       - release_snapshot:
           requires:
             - test
@@ -114,4 +124,4 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^\d+\.\d+\.\d+$/
+              only: /.*/
