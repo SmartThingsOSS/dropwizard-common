@@ -97,7 +97,7 @@ workflows:
             branches:
               only: /.*/
             tags:
-              ignore: /.*/
+              only: /.*/
       - test:
           requires:
             - build
