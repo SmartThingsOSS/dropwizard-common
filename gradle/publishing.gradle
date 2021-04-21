@@ -1,5 +1,4 @@
 apply plugin: "maven-publish"
-apply plugin: 'com.jfrog.bintray'
 
 ext.isSnapshot = version.endsWith("SNAPSHOT")
 
@@ -8,57 +7,29 @@ task sourceJar(type: Jar) {
 	from sourceSets.main.allJava
 }
 
-if (isSnapshot) {
-	if (project.hasProperty('smartThingsUserName')) {
-		publishing {
-			publications {
-				main(MavenPublication) {
-					from components.java
-					artifact sourceJar
-				}
-			}
-			repositories {
-				maven {
-					credentials {
-						username smartThingsUserName
-						password smartThingsPassword
-					}
-					url "https://smartthings.jfrog.io/smartthings/libs-snapshot-local"
-				}
-			}
+publishing {
+	
+	publications {
+		maven(MavenPublication) {
+			from components.java
+			artifact sourceJar
 		}
 	}
-} else {
-	publishing {
-		publications {
-			mavenJava(MavenPublication) {
-				from components.java
-				artifact sourceJar
-                groupId project.group
-                artifactId project.name
-                version project.version
-				pom.withXml {
-					def root = asNode()
-					// Work around gradle bug that publishes compile dependencies as runtime
-					// http://discuss.gradle.org/t/maven-publish-plugin-generated-pom-making-dependency-scope-runtime/7494/10
-					root.dependencies.'*'.findAll() {
-						it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find { dep ->
-							dep.name == it.artifactId.text()
-						}
-					}.each() {
-						it.scope*.value = 'compile'
-					}
-				}
+
+	repositories {
+		maven {
+			credentials {
+					username smartThingsUserName
+					password smartThingsPassword
 			}
-		}
-		repositories {
-			maven {
-				credentials {
-					username smartThingsOssUserName
-					password smartThingsOssPassword
-				}
+			if (isSnapshot) {
+				url "https://smartthings.jfrog.io/smartthings/libs-snapshot-local"
+
+			} else {
 				url "https://smartthings.jfrog.io/artifactory/smartthingsoss"
 			}
-		}		
+		}
 	}
+	
 }
+
