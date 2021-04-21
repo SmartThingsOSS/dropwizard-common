@@ -19,7 +19,7 @@ if (!JavaVersion.current().java8Compatible) {
 
 subprojects {
     group = "smartthings"
-    version = rootProject.file('version.txt').text.trim()
+    //version = rootProject.file('version.txt').text.trim()
 
     apply plugin: "idea"
     apply plugin: "groovy"

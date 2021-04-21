@@ -12,7 +12,7 @@ publishing {
 	publications {
 		maven(MavenPublication) {
 			from components.java
-			artifact sourceJar
+			artifact sourceJar			
 		}
 	}
 
@@ -30,6 +30,6 @@ publishing {
 			}
 		}
 	}
-	
+
 }
 
