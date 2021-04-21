@@ -96,15 +96,11 @@ workflows:
           filters:
             branches:
               only: /.*/
-            tags:
-              only: /.*/
       - test:
           requires:
             - build
           filters:
             branches:
-              only: /.*/
-            tags:
               only: /.*/
       - release_snapshot:
           requires:
@@ -122,6 +118,8 @@ workflows:
             - test
           filters:
             branches:
-              ignore: /.*/
-            tags:
-              only: /.*/
+              only:
+              - release
+              - 1.3.x-release
+              - 1.2.x-release
+              - 1.0.x-release
