@@ -23,10 +23,10 @@ publishing {
 					password smartThingsPassword
 			}
 			if (isSnapshot) {
-				url "https://smartthings.jfrog.io/smartthings/libs-snapshot-local"
+				url "https://smartthingsoss.jfrog.io/artifactory/libs-snapshot-local"
 
 			} else {
-				url "https://smartthings.jfrog.io/artifactory/smartthingsoss"
+				url "https://smartthingsoss.jfrog.io/artifactory/libs-release-local"
 			}
 		}
 	}
