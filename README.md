@@ -1,6 +1,7 @@
 Common Dropwizard Modules
 =========================
 
+
 [![codecov](https://codecov.io/gh/SmartThingsOSS/dropwizard-common/branch/master/graph/badge.svg)](https://codecov.io/gh/SmartThingsOSS/dropwizard-common)
 
 This repo is in place to house common dropwizard modules that can be utilized by
