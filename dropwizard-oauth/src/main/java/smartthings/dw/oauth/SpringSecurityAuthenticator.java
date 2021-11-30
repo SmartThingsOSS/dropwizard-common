@@ -1,8 +1,6 @@
 package smartthings.dw.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.escape.Escaper;
-import com.google.common.net.UrlEscapers;
 import com.google.common.primitives.Ints;
 import com.google.inject.Singleton;
 import io.dropwizard.auth.AuthenticationException;
@@ -20,7 +18,6 @@ import java.util.Optional;
 @Singleton
 public class SpringSecurityAuthenticator implements OAuthAuthenticator {
 	private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
-	private static final Escaper URL_ESCAPER = UrlEscapers.urlFormParameterEscaper();
 
 	private final AuthConfiguration config;
 	private final Realm realm;
@@ -50,8 +47,9 @@ public class SpringSecurityAuthenticator implements OAuthAuthenticator {
 				.setRequestTimeout(timeout)
 				.setRealm(realm)
 				.addHeader("Accept", "application/json")
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
 				.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.getLoggingId())
-				.addFormParam("token", URL_ESCAPER.escape(token))
+				.addFormParam("token", token)
 				.execute()
 				.get();
 
