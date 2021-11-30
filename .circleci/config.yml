@@ -120,6 +120,8 @@ workflows:
           requires:
             - test
           filters:
+            tags:
+              only: /.*/
             branches:
               only:
               - release
