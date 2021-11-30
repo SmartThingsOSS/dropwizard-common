@@ -3,6 +3,7 @@ package smartthings.dw.guice;
 import com.codahale.metrics.health.HealthCheck;
 import com.google.common.collect.Lists;
 import com.google.inject.*;
+import com.google.inject.Module;
 import com.google.inject.servlet.GuiceFilter;
 import com.google.inject.servlet.ServletModule;
 import io.dropwizard.lifecycle.Managed;

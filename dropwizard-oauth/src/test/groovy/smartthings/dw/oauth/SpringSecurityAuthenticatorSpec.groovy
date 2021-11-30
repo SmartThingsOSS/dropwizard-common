@@ -39,6 +39,7 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 
 		then:
 		1 * client.preparePost("${config.host}/oauth/check_token") >> requestBuilder
+        1 * requestBuilder.addHeader('Content-Type', 'application/x-www-form-urlencoded') >> requestBuilder
 		1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
 		1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
 		1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
@@ -59,6 +60,7 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 		then:
 		1 * client.preparePost("${config.host}/oauth/check_token") >> requestBuilder
 		1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
+        1 * requestBuilder.addHeader('Content-Type', 'application/x-www-form-urlencoded') >> requestBuilder
 		1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
 		1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
 		1 * requestBuilder.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.loggingId) >> requestBuilder
@@ -79,6 +81,7 @@ class SpringSecurityAuthenticatorSpec extends Specification {
         then:
         1 * client.preparePost("${config.host}/oauth/check_token") >> requestBuilder
         1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
+        1 * requestBuilder.addHeader('Content-Type', 'application/x-www-form-urlencoded') >> requestBuilder
         1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
         1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
         1 * requestBuilder.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.loggingId) >> requestBuilder
@@ -101,6 +104,7 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 
 		then:
 		1 * client.preparePost("${config.host}/oauth/check_token") >> requestBuilder
+        1 * requestBuilder.addHeader('Content-Type', 'application/x-www-form-urlencoded') >> requestBuilder
 		1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
 		1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
 		1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
@@ -130,7 +134,8 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 		then:
 		1 * client.preparePost("${config.host}/oauth/check_token") >> requestBuilder
 		1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
-		1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
+        1 * requestBuilder.addHeader('Content-Type', 'application/x-www-form-urlencoded') >> requestBuilder
+        1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
 		1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
 		1 * requestBuilder.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.loggingId) >> requestBuilder
 		1 * requestBuilder.addFormParam("token", token) >> requestBuilder
@@ -167,7 +172,8 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 		then:
 		1 * client.preparePost("${config.host}/oauth/check_token") >> requestBuilder
 		1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
-		1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
+        1 * requestBuilder.addHeader('Content-Type', 'application/x-www-form-urlencoded') >> requestBuilder
+        1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
 		1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
 		1 * requestBuilder.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.loggingId) >> requestBuilder
 		1 * requestBuilder.addFormParam("token", token) >> requestBuilder
@@ -208,7 +214,8 @@ class SpringSecurityAuthenticatorSpec extends Specification {
 		1 * client.preparePost("${config.host}/oauth/check_token") >> requestBuilder
 		1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
 		1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
-		1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
+        1 * requestBuilder.addHeader('Content-Type', 'application/x-www-form-urlencoded') >> requestBuilder
+        1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
 		1 * requestBuilder.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.loggingId) >> requestBuilder
 		1 * requestBuilder.addFormParam("token", token) >> requestBuilder
 		1 * requestBuilder.execute() >> future
@@ -252,6 +259,7 @@ class SpringSecurityAuthenticatorSpec extends Specification {
         1 * client.preparePost("${config.host}/oauth/check_token") >> requestBuilder
         1 * requestBuilder.setRequestTimeout(1000) >> requestBuilder
         1 * requestBuilder.setRealm({ it.principal == config.user && it.password == config.password }) >> requestBuilder
+        1 * requestBuilder.addHeader('Content-Type', 'application/x-www-form-urlencoded') >> requestBuilder
         1 * requestBuilder.addHeader('Accept', 'application/json') >> requestBuilder
         1 * requestBuilder.addHeader(LoggingContext.CORRELATION_ID_HEADER, LoggingContext.loggingId) >> requestBuilder
         1 * requestBuilder.addFormParam("token", token) >> requestBuilder
