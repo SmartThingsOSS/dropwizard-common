@@ -5,6 +5,8 @@ dependencies {
     api 'io.dropwizard:dropwizard-auth'
     api "org.asynchttpclient:async-http-client:${asynchttpclientVersion}"
 
+    implementation 'com.github.ben-manes.caffeine:caffeine:2.9.3'
+
     testImplementation("org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:${jerseyVersion}") {
         // See http://www.dropwizard.io/0.9.1/docs/manual/auth.html#testing-protected-resources
         exclude module: 'junit'
