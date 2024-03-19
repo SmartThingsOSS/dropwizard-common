@@ -331,6 +331,8 @@ public class CassandraConfiguration {
         private Integer poolTimeoutMillis;
         private Integer localMaxConnPerHost;
         private Integer remoteMaxConnPerHost;
+        private Integer localMaxRequestsPerConn;
+        private Integer remoteMaxRequestsPerConn;
 
         public PoolConfiguration() {
 
@@ -384,6 +386,22 @@ public class CassandraConfiguration {
             this.remoteMaxConnPerHost = remoteMaxConnPerHost;
         }
 
+        public Integer getLocalMaxRequestsPerConn() {
+            return localMaxRequestsPerConn;
+        }
+
+        public void setLocalMaxRequestsPerConn(Integer localMaxRequestsPerConn) {
+            this.localMaxRequestsPerConn = localMaxRequestsPerConn;
+        }
+
+        public Integer getRemoteMaxRequestsPerConn() {
+            return remoteMaxRequestsPerConn;
+        }
+
+        public void setRemoteMaxRequestsPerConn(Integer remoteMaxRequestsPerConn) {
+            this.remoteMaxRequestsPerConn = remoteMaxRequestsPerConn;
+        }
+
         @Override
         public String toString() {
             return "PoolConfiguration{" +
@@ -393,6 +411,8 @@ public class CassandraConfiguration {
                 ", poolTimeoutMillis=" + poolTimeoutMillis +
                 ", localMaxConnPerHost=" + localMaxConnPerHost +
                 ", remoteMaxConnPerHost=" + remoteMaxConnPerHost +
+                ", localMaxRequestsPerConn=" + localMaxRequestsPerConn +
+                ", remoteMaxRequestsPerConn=" + remoteMaxRequestsPerConn +
                 '}';
         }
 
@@ -421,6 +441,14 @@ public class CassandraConfiguration {
 
             if (remoteMaxConnPerHost != null) {
                 options.setMaxConnectionsPerHost(HostDistance.REMOTE, remoteMaxConnPerHost);
+            }
+
+            if (localMaxRequestsPerConn != null) {
+                options.setMaxRequestsPerConnection(HostDistance.LOCAL, localMaxRequestsPerConn);
+            }
+
+            if (remoteMaxRequestsPerConn != null) {
+                options.setMaxRequestsPerConnection(HostDistance.REMOTE, remoteMaxRequestsPerConn);
             }
             return options;
         }
