@@ -23,7 +23,7 @@ if (isSnapshot) {
 						username smartThingsUserName
 						password smartThingsPassword
 					}
-					url "https://smartthings.artifactoryonline.com/smartthings/libs-snapshot-local"
+					url "https://smartthings.jfrog.io/smartthings/libs-snapshot-local"
 				}
 			}
 		}

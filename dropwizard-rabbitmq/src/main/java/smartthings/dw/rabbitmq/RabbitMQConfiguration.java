@@ -3,6 +3,8 @@ package smartthings.dw.rabbitmq;
 import com.rabbitmq.client.ConnectionFactory;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import static com.rabbitmq.client.ConnectionFactory.DEFAULT_HEARTBEAT;
+
 public class RabbitMQConfiguration {
 
     @NotEmpty
@@ -31,9 +33,12 @@ public class RabbitMQConfiguration {
         return shutdownTimeout;
     }
 
+    private boolean useNio = false;
+
+    private int requestedHeartBeatTimeoutInSecs = DEFAULT_HEARTBEAT;
+
     ConnectionFactory buildConnectionFactory() {
         ConnectionFactory factory = new ConnectionFactory();
-
 
         factory.setHost(host);
         factory.setVirtualHost(virtualHost);
@@ -49,6 +54,12 @@ public class RabbitMQConfiguration {
         if (networkRecoveryInterval != null) {
             factory.setNetworkRecoveryInterval(networkRecoveryInterval);
         }
+
+        if(useNio) {
+            factory.useNio();
+        }
+
+        factory.setRequestedHeartbeat(requestedHeartBeatTimeoutInSecs);
 
         return factory;
     }
@@ -87,5 +98,21 @@ public class RabbitMQConfiguration {
 
     public void setNetworkRecoveryInterval(Long networkRecoveryInterval) {
         this.networkRecoveryInterval = networkRecoveryInterval;
+    }
+
+    public boolean isUseNio() {
+        return useNio;
+    }
+
+    public void setUseNio(boolean useNio) {
+        this.useNio = useNio;
+    }
+
+    public int getRequestedHeartBeatTimeoutInSecs() {
+        return requestedHeartBeatTimeoutInSecs;
+    }
+
+    public void setRequestedHeartBeatTimeoutInSecs(int requestedHeartBeatTimeoutInSecs) {
+        this.requestedHeartBeatTimeoutInSecs = requestedHeartBeatTimeoutInSecs;
     }
 }
